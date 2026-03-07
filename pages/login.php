@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
     if (empty($email) || empty($password)) { // check that both fields were filled in
         $errors[] = 'Please enter your email and password.'; // add a validation error message
     } else {
-        $stmt = mysqli_prepare($conn, 'SELECT id, name, password FROM users WHERE email = ?'); // prepare query to avoid SQL injection
+        $stmt = mysqli_prepare($conn, 'SELECT id, full_name, password_hash FROM users WHERE email = ?'); // prepare query to avoid SQL injection
         mysqli_stmt_bind_param($stmt, 's', $email); // bind $email as a string parameter
         mysqli_stmt_execute($stmt); // run the query against the database
         mysqli_stmt_bind_result($stmt, $id, $name, $hashedPassword); // map result columns to PHP variables
