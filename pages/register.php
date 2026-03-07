@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
         } else {
             // Hash password and insert user
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT); // hash the password using bcrypt
-            $stmt = mysqli_prepare($conn, 'INSERT INTO users (name, email, password) VALUES (?, ?, ?)'); // prepare the insert query
+            $stmt = mysqli_prepare($conn, 'INSERT INTO users (full_name, email, password_hash) VALUES (?, ?, ?)'); // prepare the insert query
             mysqli_stmt_bind_param($stmt, 'sss', $name, $email, $hashedPassword); // bind name, email, and hashed password as strings
 
             if (mysqli_stmt_execute($stmt)) { // try to insert the new user row

@@ -7,7 +7,7 @@ requireLogin(); // redirect to login page if the user is not logged in
 $userId = getCurrentUserId(); // retrieve the logged-in user's ID from the session
 
 // Fetch user info
-$stmt = mysqli_prepare($conn, 'SELECT name, email, created_at FROM users WHERE id = ?'); // prepare query to avoid SQL injection
+$stmt = mysqli_prepare($conn, 'SELECT full_name, email, created_at FROM users WHERE id = ?'); // prepare query to avoid SQL injection
 mysqli_stmt_bind_param($stmt, 'i', $userId); // bind $userId as an integer parameter
 mysqli_stmt_execute($stmt); // run the prepared statement against the database
 mysqli_stmt_bind_result($stmt, $name, $email, $createdAt); // map result columns to PHP variables
