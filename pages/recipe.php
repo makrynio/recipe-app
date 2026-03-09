@@ -1,6 +1,7 @@
 <?php
 require_once '../includes/db.php';
 require_once '../includes/auth.php'; // load session/auth helper functions
+require_once '../includes/favourites.php';
 
 requireLogin();
 
@@ -68,6 +69,20 @@ $stmt->execute();
 
 $steps = $stmt->get_result();
 
+// Handle save/unsave form submission
+$userId = getCurrentUserId();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['add_favourite'])) {
+        addFavourite($conn, $userId, $recipe_id);
+    } elseif (isset($_POST['remove_favourite'])) {
+        removeFavourite($conn, $userId, $recipe_id);
+    }
+    header('Location: recipe.php?id=' . $recipe_id);
+    exit();
+}
+
+$isFavourite = isFavourite($conn, $userId, $recipe_id);
+
 require_once '../includes/header.php';
 ?>
 
@@ -84,6 +99,14 @@ require_once '../includes/header.php';
         <p><strong>Cooking time:</strong> <?php echo $recipe['cook_time_min']; ?> minutes</p>
 
         <p><?php echo htmlspecialchars($recipe['description']); ?></p>
+
+        <form method="POST" action="">
+            <?php if ($isFavourite): ?>
+                <button type="submit" name="remove_favourite">Unsave Recipe</button>
+            <?php else: ?>
+                <button type="submit" name="add_favourite">Save Recipe</button>
+            <?php endif; ?>
+        </form>
 
 
         <!-- ===================== -->

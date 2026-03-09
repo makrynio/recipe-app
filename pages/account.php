@@ -1,6 +1,7 @@
 <?php
 require_once '../includes/db.php'; // establish the database connection ($conn)
 require_once '../includes/auth.php'; // load session/auth helper functions
+require_once '../includes/favourites.php';
 
 requireLogin(); // redirect to login page if the user is not logged in
 
@@ -14,8 +15,7 @@ mysqli_stmt_bind_result($stmt, $name, $email, $createdAt); // map result columns
 mysqli_stmt_fetch($stmt); // fetch the single matching row into the bound variables
 mysqli_stmt_close($stmt); // free the statement resource
 
-// TODO: Fetch favourite recipes once Edon's favourites table is ready
-// $favourites = getFavouriteRecipes($conn, $userId);
+$favourites = getUserFavourites($conn, $userId);
 ?>
 <?php require_once '../includes/header.php'; ?>
 
@@ -31,8 +31,21 @@ mysqli_stmt_close($stmt); // free the statement resource
 
         <section class="account-favourites"> <!-- section that will list the user's saved recipes -->
             <h2>Saved Recipes</h2>
-            <!-- TODO: Wire up once favourites table is ready (Person 1) -->
-            <p>Your saved recipes will appear here.</p> <!-- placeholder until favourites feature is implemented -->
+            <?php if ($favourites->num_rows > 0): ?>
+                <ul>
+                    <?php while ($row = $favourites->fetch_assoc()): ?>
+                        <li>
+                            <a href="/recipe-app/pages/recipe.php?id=<?php echo $row['id']; ?>">
+                                <?php echo htmlspecialchars($row['title']); ?>
+                            </a>
+                            — <?php echo htmlspecialchars($row['category_name']); ?>
+                            (<?php echo $row['cook_time_min']; ?> min)
+                        </li>
+                    <?php endwhile; ?>
+                </ul>
+            <?php else: ?>
+                <p>You have no saved recipes yet.</p>
+            <?php endif; ?>
         </section>
     </main>
 
