@@ -58,15 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
     }
 }
 ?>
-<!DOCTYPE html> <!-- declares the document as HTML5 -->
-<html lang="en"> <!-- sets the page language for accessibility and search engines -->
-<head>
-    <meta charset="UTF-8"> <!-- ensures correct character encoding -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- makes the layout responsive on mobile devices -->
-    <title>Register – Recipe App</title> <!-- text shown in the browser tab -->
-    <link rel="stylesheet" href="/recipe-app/css/style.css"> <!-- loads the shared stylesheet -->
-</head>
-<body>
+<?php require_once '../includes/header.php'; ?>
     <main class="auth-container"> <!-- main content area for the registration form -->
         <h1>Create an Account</h1> <!-- page heading -->
 
@@ -101,6 +93,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
         <p>Already have an account? <a href="/recipe-app/pages/login.php">Log in</a></p> <!-- link to the login page -->
     </main>
 
-    <script src="/recipe-app/js/main.js"></script> <!-- loads the shared JavaScript file -->
-</body>
-</html>
+<?php require_once '../includes/footer.php'; ?>

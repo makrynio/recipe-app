@@ -53,34 +53,9 @@ if ($params) {
 $stmt->execute();
 
 $result = $stmt->get_result();
+
+require_once '../includes/header.php';
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Search Results</title>
-
-    <link rel="stylesheet" href="css/styles.css">
-
-</head>
-
-<body>
-
-    <header>
-
-        <h1>Recipe Web App</h1>
-
-        <nav>
-            <a href="index.php">Home</a>
-            <a href="search.php">Search</a>
-        </nav>
-
-    </header>
 
     <main>
 
@@ -116,12 +91,4 @@ $result = $stmt->get_result();
 
     </main>
 
-    <footer>
-
-        <p>Recipe Web App © <?php echo date("Y"); ?></p>
-
-    </footer>
-
-</body>
-
-</html>
+<?php require_once '../includes/footer.php'; ?>

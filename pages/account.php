@@ -17,21 +17,7 @@ mysqli_stmt_close($stmt); // free the statement resource
 // TODO: Fetch favourite recipes once Edon's favourites table is ready
 // $favourites = getFavouriteRecipes($conn, $userId);
 ?>
-<!DOCTYPE html> <!-- declares the document as HTML5 -->
-<html lang="en"> <!-- sets the page language for accessibility and search engines -->
-<head>
-    <meta charset="UTF-8"> <!-- ensures correct character encoding -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- makes the layout responsive on mobile devices -->
-    <title>My Account – Recipe App</title> <!-- text shown in the browser tab -->
-    <link rel="stylesheet" href="/recipe-app/css/style.css"> <!-- loads the shared stylesheet -->
-</head>
-<body>
-    <header> <!-- site-wide header containing navigation -->
-        <nav> <!-- navigation bar with links -->
-            <a href="/recipe-app/index.php">Home</a> <!-- link back to the homepage -->
-            <a href="/recipe-app/pages/logout.php">Log Out</a> <!-- link to end the user's session -->
-        </nav>
-    </header>
+<?php require_once '../includes/header.php'; ?>
 
     <main class="account-container"> <!-- main content area for the account page -->
         <h1>My Account</h1> <!-- page heading -->
@@ -50,6 +36,4 @@ mysqli_stmt_close($stmt); // free the statement resource
         </section>
     </main>
 
-    <script src="/recipe-app/js/main.js"></script> <!-- loads the shared JavaScript file -->
-</body>
-</html>
+<?php require_once '../includes/footer.php'; ?>
