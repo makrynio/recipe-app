@@ -4,6 +4,6 @@
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <script src="/recipe-app/js/main.js"></script>
 </body>
 </html>
