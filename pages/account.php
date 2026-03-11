@@ -1,7 +1,7 @@
 <?php
-require_once '../includes/db.php'; // establish the database connection ($conn)
-require_once '../includes/auth.php'; // load session/auth helper functions
-require_once '../includes/favourites.php';
+require_once __DIR__ . '/../includes/db.php'; // establish the database connection ($conn) - using __DIR__ for absolute path reliability
+require_once __DIR__ . '/../includes/auth.php'; // load session/auth helper functions - using __DIR__ for absolute path reliability
+require_once __DIR__ . '/../includes/favourites.php'; // load favourites helper functions - using __DIR__ for absolute path reliability
 
 requireLogin(); // redirect to login page if the user is not logged in
 
@@ -17,7 +17,7 @@ mysqli_stmt_close($stmt); // free the statement resource
 
 $favourites = getUserFavourites($conn, $userId);
 ?>
-<?php require_once '../includes/header.php'; ?>
+<?php require_once __DIR__ . '/../includes/header.php'; // include site header - using __DIR__ for absolute path reliability ?>
 
     <main class="account-container"> <!-- main content area for the account page -->
         <h1>My Account</h1> <!-- page heading -->
@@ -49,4 +49,4 @@ $favourites = getUserFavourites($conn, $userId);
         </section>
     </main>
 
-<?php require_once '../includes/footer.php'; ?>
+<?php require_once __DIR__ . '/../includes/footer.php'; // include site footer - using __DIR__ for absolute path reliability ?>

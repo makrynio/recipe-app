@@ -1,6 +1,6 @@
 <?php
-require_once '../includes/db.php'; // establish the database connection ($conn)
-require_once '../includes/auth.php'; // load session/auth helper functions
+require_once __DIR__ . '/../includes/db.php'; // establish the database connection ($conn) - using __DIR__ for absolute path reliability
+require_once __DIR__ . '/../includes/auth.php'; // load session/auth helper functions - using __DIR__ for absolute path reliability
 
 startSession(); // ensure a session is active before reading or writing $_SESSION
 
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
     }
 }
 ?>
-<?php require_once '../includes/header.php'; ?>
+<?php require_once __DIR__ . '/../includes/header.php'; // include site header - using __DIR__ for absolute path reliability ?>
     <main class="auth-container"> <!-- main content area for the login form -->
         <h1>Log In</h1> <!-- page heading -->
 
@@ -64,4 +64,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
         <p>Don't have an account? <a href="/recipe-app/pages/register.php">Register</a></p> <!-- link to the registration page -->
     </main>
 
-<?php require_once '../includes/footer.php'; ?>
+<?php require_once __DIR__ . '/../includes/footer.php'; // include site footer - using __DIR__ for absolute path reliability ?>

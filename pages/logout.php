@@ -1,5 +1,5 @@
 <?php
-require_once '../includes/auth.php'; // load session/auth helper functions
+require_once __DIR__ . '/../includes/auth.php'; // load session/auth helper functions - using __DIR__ for absolute path reliability
 
 startSession(); // ensure the session is active so it can be read and destroyed
 

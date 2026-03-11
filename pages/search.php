@@ -1,12 +1,12 @@
 <?php
-require_once '../includes/db.php';
-require_once '../includes/auth.php'; // load session/auth helper functions
+require_once __DIR__ . '/../includes/db.php'; // establish the database connection ($conn) - using __DIR__ for absolute path reliability
+require_once __DIR__ . '/../includes/auth.php'; // load session/auth helper functions - using __DIR__ for absolute path reliability
 
 requireLogin();
 
 $categories = $conn->query("SELECT * FROM categories");
 
-require_once '../includes/header.php';
+require_once __DIR__ . '/../includes/header.php'; // include site header - using __DIR__ for absolute path reliability
 ?>
 
     <main>
@@ -53,4 +53,4 @@ require_once '../includes/header.php';
 
     </main>
 
-<?php require_once '../includes/footer.php'; ?>
+<?php require_once __DIR__ . '/../includes/footer.php'; // include site footer - using __DIR__ for absolute path reliability ?>

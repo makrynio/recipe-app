@@ -1,3 +1,19 @@
+/* CSS Custom Properties (Variables) */
+:root {
+    --color-white: #ffffff;
+    --color-light-gray: #f5f5f5;
+    --color-dark-gray: #222;
+    --color-border: #ddd;
+    --border-radius: 8px;
+    --spacing-xs: 0.75rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --gap-sm: 0.75rem;
+    --gap-md: 1rem;
+    --gap-lg: 1.25rem;
+}
+
 /* Basic style */
 * {
     box-sizing: border-box;
@@ -7,8 +23,8 @@ body {
     margin: 0;
     font-family: Arial, sans-serif;
     line-height: 1.5;
-    background-color: #f5f5f5;
-    color: #222;
+    background-color: var(--color-light-gray);
+    color: var(--color-dark-gray);
 }
 
 img {
@@ -32,17 +48,45 @@ a:focus {
     margin: 0 auto;
 }
 
-/* Header */
+/* Card-style elements with consistent styling */
+.site-header,
+.site-footer,
+section,
+form {
+    background-color: var(--color-white);
+    border-radius: var(--border-radius);
+}
+
+/* Header and Footer borders */
 .site-header {
-    background-color: #ffffff;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.site-footer {
+    border-top: 1px solid var(--color-border);
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-sm) 0;
+}
+
+/* Section and form styling */
+section,
+form {
+    border: 1px solid var(--color-border);
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Flexbox column layout utility */
+.flex-column {
+    display: flex;
+    flex-direction: column;
 }
 
 .site-header .container {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    padding: 1rem 0;
+    gap: var(--gap-md);
+    padding: var(--spacing-sm) 0;
 }
 
 .site-title {
@@ -54,41 +98,24 @@ a:focus {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: var(--gap-sm);
     margin: 0;
     padding: 0;
 }
 
 /* Main content */
 main.container {
-    padding: 2rem 0;
+    padding: var(--spacing-lg) 0;
 }
 
-/* Footer */
-.site-footer {
-    background-color: #ffffff;
-    border-top: 1px solid #ddd;
-    margin-top: 2rem;
-    padding: 1rem 0;
-}
-
-/* Basic content blocks */
-section,
-form {
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-}
-
+/* Form inputs */
 input,
 select,
 textarea,
 button {
     width: 100%;
-    padding: 0.75rem;
-    margin-bottom: 1rem;
+    padding: var(--spacing-xs);
+    margin-bottom: var(--spacing-sm);
     font: inherit;
 }
 
@@ -106,6 +133,18 @@ button {
 
     .nav-list {
         flex-direction: row;
-        gap: 1.25rem;
+        gap: var(--gap-lg);
+    }
+
+    /* Auth container with flexbox for form layout */
+    .auth-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Login form - 50% width, aligned to left */
+    #login-form,
+    #register-form {
+        width: 50%;
     }
 }
