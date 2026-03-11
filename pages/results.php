@@ -1,48 +1,128 @@
 <?php
-require_once __DIR__ . '/../includes/db.php'; // establish the database connection ($conn) - using __DIR__ for absolute path reliability
-require_once __DIR__ . '/../includes/auth.php'; // load session/auth helper functions - using __DIR__ for absolute path reliability
 
+// Include the database connection file
+// __DIR__ ensures a reliable absolute path regardless of script execution context
+require_once __DIR__ . '/../includes/db.php';
+
+// Include authentication helper functions
+require_once __DIR__ . '/../includes/auth.php';
+
+// Ensure that only authenticated users can access the search results
 requireLogin();
+
+
+// ----------------------
+// Retrieve search parameters
+// ----------------------
+
+// The null coalescing operator ensures that empty values are used
+// if parameters are not present in the GET request
 
 $name = $_GET['name'] ?? '';
 $category = $_GET['category'] ?? '';
 $ingredient = $_GET['ingredient'] ?? '';
+$difficulty = $_GET['difficulty'] ?? '';
+$max_time = $_GET['max_time'] ?? '';
 $sort = $_GET['sort'] ?? '';
 
+
+// ----------------------
+// Base SQL query
+// ----------------------
+
+// This query retrieves recipes along with:
+// - category name
+// - average rating
+// - number of ratings
+
 $sql = "
-SELECT DISTINCT recipes.*, categories.name AS category_name
+SELECT 
+    recipes.*,
+    categories.name AS category_name,
+    COALESCE(AVG(ratings.rating),0) AS avg_rating
 FROM recipes
 LEFT JOIN categories ON recipes.category_id = categories.id
 LEFT JOIN recipe_ingredients ON recipes.id = recipe_ingredients.recipe_id
-WHERE 1=1
+LEFT JOIN ratings ON recipes.id = ratings.recipe_id
+WHERE recipes.is_published = 1
 ";
 
 $params = [];
 $types = "";
 
+
+// ----------------------
+// Apply filters
+// ----------------------
+
+// Filter by recipe name
 if (!empty($name)) {
     $sql .= " AND recipes.title LIKE ?";
     $params[] = "%$name%";
     $types .= "s";
 }
 
+
+// Filter by category
 if (!empty($category)) {
     $sql .= " AND recipes.category_id = ?";
     $params[] = $category;
     $types .= "i";
 }
 
+
+// Filter by ingredient
 if (!empty($ingredient)) {
-    $sql .= " AND recipe_ingredients.name LIKE ?";
+    $sql .= " AND recipe_ingredients.ingredient_name LIKE ?";
     $params[] = "%$ingredient%";
     $types .= "s";
 }
 
-if ($sort == "name") {
-    $sql .= " ORDER BY recipes.title ASC";
-} elseif ($sort == "time") {
-    $sql .= " ORDER BY recipes.cook_time_min ASC";
+
+// Filter by difficulty
+if (!empty($difficulty)) {
+    $sql .= " AND recipes.difficulty = ?";
+    $params[] = $difficulty;
+    $types .= "s";
 }
+
+
+// Filter by maximum cooking time
+if (!empty($max_time)) {
+    $sql .= " AND recipes.cook_time_min <= ?";
+    $params[] = $max_time;
+    $types .= "i";
+}
+
+
+// ----------------------
+// Group results
+// ----------------------
+
+// Required because AVG() and COUNT() are used
+$sql .= " GROUP BY recipes.id";
+
+
+// ----------------------
+// Sorting options
+// ----------------------
+
+if ($sort === "name") {
+    $sql .= " ORDER BY recipes.title ASC";
+} elseif ($sort === "time") {
+    $sql .= " ORDER BY recipes.cook_time_min ASC";
+} elseif ($sort === "rating") {
+    $sql .= " ORDER BY avg_rating DESC";
+} elseif ($sort === "newest") {
+    $sql .= " ORDER BY recipes.created_at DESC";
+}
+
+
+// ----------------------
+// Prepare and execute query
+// ----------------------
+
+// Prepared statements protect against SQL injection
 
 $stmt = $conn->prepare($sql);
 
@@ -51,44 +131,71 @@ if ($params) {
 }
 
 $stmt->execute();
-
 $result = $stmt->get_result();
 
-require_once __DIR__ . '/../includes/header.php'; // include site header - using __DIR__ for absolute path reliability
+
+// Include page header
+require_once __DIR__ . '/../includes/header.php';
+
 ?>
 
-    <main>
+<main>
 
-        <h2>Search Results</h2>
+    <h2>Search Results</h2>
 
-        <?php if ($result->num_rows > 0): ?>
+    <?php if ($result->num_rows > 0): ?>
 
-            <div class="recipes">
+        <div class="recipes">
 
-                <?php while ($row = $result->fetch_assoc()): ?>
+            <?php while ($row = $result->fetch_assoc()): ?>
 
-                    <div class="recipe-card">
+                <div class="recipe-card">
 
-                        <h3><?php echo htmlspecialchars($row['title']); ?></h3>
+                    <!-- Display recipe title -->
+                    <h3><?php echo htmlspecialchars($row['title']); ?></h3>
 
-                        <p>Category: <?php echo htmlspecialchars($row['category_name']); ?></p>
+                    <!-- Display recipe category -->
+                    <p>
+                        <strong>Category:</strong>
+                        <?php echo htmlspecialchars($row['category_name'] ?? 'Uncategorised'); ?>
+                    </p>
 
-                        <p>Cooking time: <?php echo $row['cook_time_min']; ?> minutes</p>
+                    <!-- Display cooking time -->
+                    <p>
+                        <strong>Cooking time:</strong>
+                        <?php echo $row['cook_time_min'] ?? 'N/A'; ?> minutes
+                    </p>
 
-                        <a href="recipe.php?id=<?php echo $row['id']; ?>">View Recipe</a>
+                    <!-- Display difficulty -->
+                    <p>
+                        <strong>Difficulty:</strong>
+                        <?php echo htmlspecialchars($row['difficulty']); ?>
+                    </p>
 
-                    </div>
+                    <!-- Display average rating -->
+                    <p>
+                        <strong>Rating:</strong>
+                        <?php echo round($row['avg_rating'], 1); ?> ⭐
+                    </p>
 
-                <?php endwhile; ?>
+                    <!-- Link to the recipe details page -->
+                    <a href="recipe.php?id=<?php echo $row['id']; ?>">View Recipe</a>
 
-            </div>
+                </div>
 
-        <?php else: ?>
+            <?php endwhile; ?>
 
-            <p>No recipes found.</p>
+        </div>
 
-        <?php endif; ?>
+    <?php else: ?>
 
-    </main>
+        <p>No recipes found matching your criteria.</p>
 
-<?php require_once __DIR__ . '/../includes/footer.php'; // include site footer - using __DIR__ for absolute path reliability ?>
+    <?php endif; ?>
+
+</main>
+
+<?php
+// Include the website footer
+require_once __DIR__ . '/../includes/footer.php';
+?>
