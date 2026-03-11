@@ -59,38 +59,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
 }
 ?>
 <?php require_once __DIR__ . '/../includes/header.php'; // include site header - using __DIR__ for absolute path reliability ?>
-    <main class="auth-container"> <!-- main content area for the registration form -->
-        <h1>Create an Account</h1> <!-- page heading -->
+<main class="auth-container"> <!-- main content area for the registration form -->
+    <h1>Create an Account</h1> <!-- page heading -->
 
-        <?php if (!empty($errors)): ?> <!-- only render the error list if there are errors -->
-            <ul class="error-list"> <!-- unordered list to display validation errors -->
-                <?php foreach ($errors as $error): ?> <!-- loop through each error message -->
-                    <li><?php echo htmlspecialchars($error); ?></li> <!-- output each error, escaped to prevent XSS -->
-                <?php endforeach; ?>
-            </ul>
-        <?php endif; ?>
+    <?php if (!empty($errors)): ?> <!-- only render the error list if there are errors -->
+        <ul class="error-list"> <!-- unordered list to display validation errors -->
+            <?php foreach ($errors as $error): ?> <!-- loop through each error message -->
+                <li><?php echo htmlspecialchars($error); ?></li> <!-- output each error, escaped to prevent XSS -->
+            <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
 
-        <?php if ($success): ?> <!-- only render the success message if registration completed -->
-            <p class="success-msg"><?php echo $success; ?></p> <!-- display the success message with login link (HTML is intentional here) -->
-        <?php endif; ?>
+    <?php if ($success): ?> <!-- only render the success message if registration completed -->
+        <p class="success-msg"><?php echo $success; ?></p>
+        <!-- display the success message with login link (HTML is intentional here) -->
+    <?php endif; ?>
 
-        <form id="register-form" method="POST" action="" novalidate> <!-- form submits via POST to this same page; novalidate disables browser built-in validation -->
-            <label for="name">Full Name</label> <!-- label linked to the name input -->
-            <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($_POST['name'] ?? ''); ?>" required> <!-- name field; repopulates on failed submission, escaped to prevent XSS -->
+    <form id="register-form" method="POST" action="" novalidate>
+        <!-- form submits via POST to this same page; novalidate disables browser built-in validation -->
+        <label for="name">Full Name</label> <!-- label linked to the name input -->
+        <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($_POST['name'] ?? ''); ?>" required>
+        <!-- name field; repopulates on failed submission, escaped to prevent XSS -->
 
-            <label for="email">Email Address</label> <!-- label linked to the email input -->
-            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" required> <!-- email field; repopulates on failed submission, escaped to prevent XSS -->
+        <label for="email">Email Address</label> <!-- label linked to the email input -->
+        <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>"
+            required> <!-- email field; repopulates on failed submission, escaped to prevent XSS -->
 
-            <label for="password">Password</label> <!-- label linked to the password input -->
-            <input type="password" id="password" name="password" required> <!-- password field; value is never repopulated for security -->
+        <label for="password">Password</label> <!-- label linked to the password input -->
+        <input type="password" id="password" name="password" required>
+        <!-- password field; value is never repopulated for security -->
 
-            <label for="confirm_password">Confirm Password</label> <!-- label linked to the confirm password input -->
-            <input type="password" id="confirm_password" name="confirm_password" required> <!-- confirmation field; value is never repopulated for security -->
+        <label for="confirm_password">Confirm Password</label> <!-- label linked to the confirm password input -->
+        <input type="password" id="confirm_password" name="confirm_password" required>
+        <!-- confirmation field; value is never repopulated for security -->
 
-            <button type="submit">Register</button> <!-- submits the form -->
-        </form>
+        <button type="submit">Register</button> <!-- submits the form -->
+    </form>
 
-        <p>Already have an account? <a href="/recipe-app/pages/login.php">Log in</a></p> <!-- link to the login page -->
-    </main>
+    <p>Already have an account? <a href="/recipe-app/pages/login.php">Log in</a></p> <!-- link to the login page -->
+</main>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; // include site footer - using __DIR__ for absolute path reliability ?>

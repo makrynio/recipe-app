@@ -1,60 +1,91 @@
 <?php
-require_once __DIR__ . '/../includes/db.php'; // establish the database connection ($conn) - using __DIR__ for absolute path reliability
-require_once __DIR__ . '/../includes/auth.php'; // load session/auth helper functions - using __DIR__ for absolute path reliability
-require_once __DIR__ . '/../includes/favourites.php'; // load favourites helper functions - using __DIR__ for absolute path reliability
 
+// Include the database connection
+// __DIR__ ensures the correct absolute path regardless of execution context
+require_once __DIR__ . '/../includes/db.php';
+
+// Include authentication helper functions
+require_once __DIR__ . '/../includes/auth.php';
+
+// Include helper functions related to favourite recipes
+require_once __DIR__ . '/../includes/favourites.php';
+
+// Ensure the user is authenticated before accessing this page
 requireLogin();
 
-// Get the recipe ID from the URL
+
+// Retrieve recipe ID from the URL query parameter
 // Example: recipe.php?id=3
 $recipe_id = $_GET['id'] ?? 0;
 
 
 // ----------------------
-// Fetch the main recipe data
+// Fetch main recipe information
 // ----------------------
 
+// This query retrieves the recipe along with:
+// - its category
+// - the author's name
+// - the average rating
+// - the total number of ratings
+
 $sql = "
-SELECT recipes.*, categories.name AS category_name
+SELECT 
+    recipes.*,
+    categories.name AS category_name,
+    users.full_name AS author_name,
+    COALESCE(AVG(ratings.rating),0) AS avg_rating
 FROM recipes
 LEFT JOIN categories ON recipes.category_id = categories.id
+LEFT JOIN users ON recipes.user_id = users.id
+LEFT JOIN ratings ON recipes.id = ratings.recipe_id
 WHERE recipes.id = ?
+GROUP BY recipes.id
 ";
 
+// Prepared statement prevents SQL injection attacks
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $recipe_id);
 $stmt->execute();
 
 $result = $stmt->get_result();
 
-// If no recipe is found, stop execution
-if ($result->num_rows == 0) {
+// Stop execution if the recipe does not exist
+if ($result->num_rows === 0) {
     die("Recipe not found");
 }
 
+// Store recipe data
 $recipe = $result->fetch_assoc();
 
 
 // ----------------------
-// Fetch recipe_ingredients for the recipe
+// Fetch ingredients
 // ----------------------
 
+// Retrieve all ingredients belonging to the recipe
+// Ordered by position to maintain the correct display order
+
 $sql_ingredients = "
-SELECT ingredient_name, quantity
+SELECT ingredient_name, quantity, unit, note
 FROM recipe_ingredients
 WHERE recipe_id = ?
+ORDER BY position ASC
 ";
 
 $stmt = $conn->prepare($sql_ingredients);
 $stmt->bind_param("i", $recipe_id);
 $stmt->execute();
 
-$recipe_ingredients = $stmt->get_result();
+$ingredients = $stmt->get_result();
 
 
 // ----------------------
 // Fetch cooking steps
 // ----------------------
+
+// Retrieve all preparation steps for the recipe
+// Ordered by step_number to maintain the correct sequence
 
 $sql_steps = "
 SELECT step_number, instruction, step_time_min
@@ -69,87 +100,165 @@ $stmt->execute();
 
 $steps = $stmt->get_result();
 
-// Handle save/unsave form submission
+
+// ----------------------
+// Favourite recipe logic
+// ----------------------
+
+// Retrieve the current logged-in user ID
 $userId = getCurrentUserId();
+
+// Handle form submission for saving or removing a favourite
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     if (isset($_POST['add_favourite'])) {
         addFavourite($conn, $userId, $recipe_id);
-    } elseif (isset($_POST['remove_favourite'])) {
+    }
+
+    if (isset($_POST['remove_favourite'])) {
         removeFavourite($conn, $userId, $recipe_id);
     }
-    header('Location: recipe.php?id=' . $recipe_id);
+
+    // Redirect back to the same page to prevent duplicate submissions
+    header("Location: recipe.php?id=" . $recipe_id);
     exit();
 }
 
+// Check whether this recipe is already saved by the user
 $isFavourite = isFavourite($conn, $userId, $recipe_id);
 
-require_once __DIR__ . '/../includes/header.php'; // include site header - using __DIR__ for absolute path reliability
+
+// Include the website header (navigation and layout)
+require_once __DIR__ . '/../includes/header.php';
+
 ?>
 
-    <main>
+<main>
 
-        <!-- ===================== -->
-        <!-- Main recipe information -->
-        <!-- ===================== -->
+    <!-- ===================== -->
+    <!-- Recipe main information -->
+    <!-- ===================== -->
 
-        <h2><?php echo htmlspecialchars($recipe['title']); ?></h2>
+    <h2><?php echo htmlspecialchars($recipe['title']); ?></h2>
 
-        <p><strong>Category:</strong> <?php echo htmlspecialchars($recipe['category_name']); ?></p>
+    <p><strong>Category:</strong> <?php echo htmlspecialchars($recipe['category_name'] ?? 'Uncategorised'); ?></p>
 
-        <p><strong>Cooking time:</strong> <?php echo $recipe['cook_time_min']; ?> minutes</p>
+    <p><strong>Author:</strong> <?php echo htmlspecialchars($recipe['author_name']); ?></p>
 
-        <p><?php echo htmlspecialchars($recipe['description']); ?></p>
+    <p><strong>Difficulty:</strong> <?php echo htmlspecialchars($recipe['difficulty']); ?></p>
 
-        <form method="POST" action="">
-            <?php if ($isFavourite): ?>
-                <button type="submit" name="remove_favourite">Unsave Recipe</button>
-            <?php else: ?>
-                <button type="submit" name="add_favourite">Save Recipe</button>
-            <?php endif; ?>
-        </form>
+    <p><strong>Servings:</strong> <?php echo $recipe['servings'] ?? 'N/A'; ?></p>
+
+    <p><strong>Preparation time:</strong> <?php echo $recipe['prep_time_min'] ?? 'N/A'; ?> minutes</p>
+
+    <p><strong>Cooking time:</strong> <?php echo $recipe['cook_time_min'] ?? 'N/A'; ?> minutes</p>
 
 
-        <!-- ===================== -->
-        <!-- recipe_ingredients section -->
-        <!-- ===================== -->
-
-        <h3>recipe_ingredients</h3>
-
-        <ul>
-
-            <?php while ($row = $recipe_ingredients->fetch_assoc()): ?>
-
-                <li>
-                    <?php echo htmlspecialchars($row['quantity']) . " - " . htmlspecialchars($row['ingredient_name']); ?>
-                </li>
-
-            <?php endwhile; ?>
-
-        </ul>
+    <!-- Display average rating -->
+    <p>
+        <strong>Average rating:</strong>
+        <?php echo round($recipe['avg_rating'], 1); ?> ⭐
+    </p>
 
 
-        <!-- ===================== -->
-        <!-- Cooking steps section -->
-        <!-- ===================== -->
+    <!-- Display recipe image if available -->
+    <?php if (!empty($recipe['image_url'])): ?>
+        <img src="<?php echo htmlspecialchars($recipe['image_url']); ?>" style="max-width:400px;">
+    <?php endif; ?>
 
-        <h3>Steps</h3>
 
-        <ol>
+    <!-- Display recipe description -->
+    <p><?php echo htmlspecialchars($recipe['description'] ?? 'Description not specified'); ?></p>
 
-            <?php while ($row = $steps->fetch_assoc()): ?>
 
-                <li>
+    <!-- Display original source link if provided -->
+    <?php if (!empty($recipe['source_url'])): ?>
+        <p>
+            Source:
+            <a href="<?php echo htmlspecialchars($recipe['source_url']); ?>" target="_blank">
+                View original recipe
+            </a>
+        </p>
+    <?php endif; ?>
 
-                    <p><?php echo htmlspecialchars($row['instruction']); ?></p>
 
+    <!-- ===================== -->
+    <!-- Favourite button -->
+    <!-- ===================== -->
+
+    <form method="POST">
+
+        <?php if ($isFavourite): ?>
+            <button type="submit" name="remove_favourite">Unsave Recipe</button>
+        <?php else: ?>
+            <button type="submit" name="add_favourite">Save Recipe</button>
+        <?php endif; ?>
+
+    </form>
+
+
+    <!-- ===================== -->
+    <!-- Ingredients section -->
+    <!-- ===================== -->
+
+    <h3>Ingredients</h3>
+
+    <ul>
+
+        <?php while ($row = $ingredients->fetch_assoc()): ?>
+
+            <li>
+
+                <?php
+
+                // Prepare ingredient display with optional quantity and unit
+                $quantity = $row['quantity'] !== null ? $row['quantity'] : '';
+                $unit = $row['unit'] ?? '';
+                $note = $row['note'] ?? '';
+
+                echo htmlspecialchars(trim("$quantity $unit")) . " - " . htmlspecialchars($row['ingredient_name']);
+
+                // Display optional ingredient note
+                if ($note) {
+                    echo " (" . htmlspecialchars($note) . ")";
+                }
+
+                ?>
+
+            </li>
+
+        <?php endwhile; ?>
+
+    </ul>
+
+
+    <!-- ===================== -->
+    <!-- Cooking steps section -->
+    <!-- ===================== -->
+
+    <h3>Steps</h3>
+
+    <ol>
+
+        <?php while ($row = $steps->fetch_assoc()): ?>
+
+            <li>
+
+                <p><?php echo htmlspecialchars($row['instruction']); ?></p>
+
+                <?php if ($row['step_time_min']): ?>
                     <p><em>Time: <?php echo $row['step_time_min']; ?> minutes</em></p>
+                <?php endif; ?>
 
-                </li>
+            </li>
 
-            <?php endwhile; ?>
+        <?php endwhile; ?>
 
-        </ol>
+    </ol>
 
-    </main>
+</main>
 
-<?php require_once __DIR__ . '/../includes/footer.php'; // include site footer - using __DIR__ for absolute path reliability ?>
+<?php
+// Include the site footer
+require_once __DIR__ . '/../includes/footer.php';
+?>
