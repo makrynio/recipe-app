@@ -174,17 +174,6 @@ INSERT INTO recipe_steps (
   (5, 4, 'Press mixture firmly into the tray, then cover and chill for at least 1 hour.', 60),
   (5, 5, 'Lift from tray and cut into bars.', 2);
 
-INSERT INTO ratings (
-  recipe_id, user_id, rating, comment
-) VALUES
-  (1, 2, 5, 'Classic and very flavorful.'),
-  (1, 3, 4, 'Great sauce, simmering longer made it even better.'),
-  (2, 1, 5, 'Very fluffy pancakes even without eggs.'),
-  (2, 3, 4, 'Nice vegan option for breakfast.'),
-  (3, 2, 4, 'Good pizza base and colorful toppings.'),
-  (4, 1, 5, 'Excellent biryani, very aromatic.'),
-  (4, 3, 4, 'Lamb turned out tender and tasty.'),
-  (5, 2, 4, 'Good no-bake snack bars.');
 
 INSERT INTO favourites (user_id, recipe_id) VALUES
   (1, 1),
