@@ -123,6 +123,11 @@ button {
     cursor: pointer;
 }
 
+/* Remove gap between stacked forms */
+.stacked-forms form {
+    margin-bottom: 0;
+}
+
 /* Star rating widget */
 .star-rating {
     border: none;
