@@ -10,6 +10,9 @@ require_once __DIR__ . '/../includes/auth.php';
 // Include helper functions related to favourite recipes
 require_once __DIR__ . '/../includes/favourites.php';
 
+// Include helper functions for recipe ratings
+require_once __DIR__ . '/../includes/ratings.php';
+
 // Ensure the user is authenticated before accessing this page
 requireLogin();
 
@@ -34,7 +37,8 @@ SELECT
     recipes.*,
     categories.name AS category_name,
     users.full_name AS author_name,
-    COALESCE(AVG(ratings.rating),0) AS avg_rating
+    COALESCE(AVG(ratings.rating),0) AS avg_rating,
+    COUNT(ratings.id) AS rating_count
 FROM recipes
 LEFT JOIN categories ON recipes.category_id = categories.id
 LEFT JOIN users ON recipes.user_id = users.id
@@ -119,6 +123,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         removeFavourite($conn, $userId, $recipe_id);
     }
 
+    if (isset($_POST['submit_rating'])) {
+        $rating = (int) ($_POST['rating'] ?? 0);
+
+        if ($rating >= 1 && $rating <= 5) {
+            saveRating($conn, $userId, $recipe_id, $rating, '');
+        }
+    }
+
     // Redirect back to the same page to prevent duplicate submissions
     header("Location: recipe.php?id=" . $recipe_id);
     exit();
@@ -126,6 +138,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Check whether this recipe is already saved by the user
 $isFavourite = isFavourite($conn, $userId, $recipe_id);
+
+// Fetch the current user's existing rating for this recipe (if any)
+$userRating = getUserRating($conn, $userId, $recipe_id);
 
 
 // Include the website header (navigation and layout)
@@ -154,12 +169,6 @@ require_once __DIR__ . '/../includes/header.php';
     <p><strong>Cooking time:</strong> <?php echo $recipe['cook_time_min'] ?? 'N/A'; ?> minutes</p>
 
 
-    <!-- Display average rating -->
-    <p>
-        <strong>Average rating:</strong>
-        <?php echo round($recipe['avg_rating'], 1); ?> ⭐
-    </p>
-
     <!-- Display recipe image if available -->
     <?php if (!empty($recipe['image_url'])): ?>
         <img src="<?php echo htmlspecialchars($recipe['image_url']); ?>" style="max-width:400px;">
@@ -181,19 +190,63 @@ require_once __DIR__ . '/../includes/header.php';
     <?php endif; ?>
 
 
+    <!-- Display average rating only once at least one rating exists -->
+    <?php if ($recipe['rating_count'] > 0): ?>
+        <p>
+            <strong>Average rating:</strong>
+            <?php echo round($recipe['avg_rating'], 1); ?> / 5 ⭐
+            (<?php echo $recipe['rating_count']; ?> <?php echo $recipe['rating_count'] === 1 ? 'rating' : 'ratings'; ?>)
+        </p>
+    <?php endif; ?>
+
+
     <!-- ===================== -->
-    <!-- Favourite button -->
+    <!-- Rate this recipe -->
     <!-- ===================== -->
 
-    <form method="POST">
+    <h3><?php echo $userRating ? 'Update your rating' : 'Rate this recipe'; ?></h3>
 
-        <?php if ($isFavourite): ?>
-            <button type="submit" name="remove_favourite">Unsave Recipe</button>
-        <?php else: ?>
-            <button type="submit" name="add_favourite">Save Recipe</button>
-        <?php endif; ?>
+    <div class="stacked-forms">
 
-    </form>
+        <form method="POST" id="rating-form">
+
+            <fieldset class="star-rating">
+                <legend>Your rating</legend>
+                <?php for ($i = 1; $i <= 5; $i++): ?>
+                    <input
+                        type="radio"
+                        id="star<?php echo $i; ?>"
+                        name="rating"
+                        value="<?php echo $i; ?>"
+                        <?php echo ($userRating && (int)$userRating['rating'] === $i) ? 'checked' : ''; ?>
+                        required
+                    >
+                    <label for="star<?php echo $i; ?>">&#9733;</label>
+                <?php endfor; ?>
+            </fieldset>
+
+            <button type="submit" name="submit_rating">
+                <?php echo $userRating ? 'Update rating' : 'Submit rating'; ?>
+            </button>
+
+        </form>
+
+
+        <!-- ===================== -->
+        <!-- Favourite button -->
+        <!-- ===================== -->
+
+        <form method="POST">
+
+            <?php if ($isFavourite): ?>
+                <button type="submit" name="remove_favourite">Unsave Recipe</button>
+            <?php else: ?>
+                <button type="submit" name="add_favourite">Save Recipe</button>
+            <?php endif; ?>
+
+        </form>
+
+    </div>
 
 
     <!-- ===================== -->

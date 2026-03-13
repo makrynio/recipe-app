@@ -39,7 +39,8 @@ $sql = "
 SELECT 
     recipes.*,
     categories.name AS category_name,
-    COALESCE(AVG(ratings.rating),0) AS avg_rating
+    COALESCE(AVG(ratings.rating),0) AS avg_rating,
+    COUNT(ratings.id) AS rating_count
 FROM recipes
 LEFT JOIN categories ON recipes.category_id = categories.id
 LEFT JOIN recipe_ingredients ON recipes.id = recipe_ingredients.recipe_id
@@ -172,11 +173,13 @@ require_once __DIR__ . '/../includes/header.php';
                         <?php echo htmlspecialchars($row['difficulty']); ?>
                     </p>
 
-                    <!-- Display average rating -->
-                    <p>
-                        <strong>Rating:</strong>
-                        <?php echo round($row['avg_rating'], 1); ?> ⭐
-                    </p>
+                    <!-- Display average rating only once at least one rating exists -->
+                    <?php if ($row['rating_count'] > 0): ?>
+                        <p>
+                            <strong>Rating:</strong>
+                            <?php echo round($row['avg_rating'], 1); ?> / 5 ⭐
+                        </p>
+                    <?php endif; ?>
 
                     <!-- Link to the recipe details page -->
                     <a href="recipe.php?id=<?php echo $row['id']; ?>">View Recipe</a>

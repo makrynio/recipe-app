@@ -113,6 +113,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
             <li>Share feedback with the community</li>
         </ul>
 
+        <img src="/recipe-app/images/register-illustration.jpg"
+             alt="fresh ingredients"
+             class="sidebar-image">
     </aside>
 </div> <!-- end of FLEX WRAPPER -->
     

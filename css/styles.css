@@ -125,6 +125,41 @@ button {
     cursor: pointer;
 }
 
+/* Remove gap between stacked forms */
+.stacked-forms form {
+    margin-bottom: 0;
+}
+
+/* Star rating widget */
+.star-rating {
+    border: none;
+    padding: 0;
+    margin-bottom: var(--spacing-sm);
+}
+
+.star-rating legend {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.star-rating input[type="radio"] {
+    display: none;
+}
+
+.star-rating label {
+    font-size: 2rem;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.15s;
+    width: auto;
+    margin: 0;
+    padding: 0 2px;
+}
+
+.star-rating label.active {
+    color: #4a90d9;
+}
+
 /* Desktop responsive styles - Adjust layouts for larger screens */
 @media (min-width: 768px) {
     .site-header .container {
