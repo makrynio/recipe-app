@@ -19,7 +19,7 @@ $favourites = getUserFavourites($conn, $userId);
 ?>
 <?php require_once __DIR__ . '/../includes/header.php'; // include site header - using __DIR__ for absolute path reliability ?>
 
-    <main class="account-container"> <!-- main content area for the account page -->
+    <main class="account-container container"> <!-- main content area for the account page -->
         <h1>My Account</h1> <!-- page heading -->
 
         <section class="account-info"> <!-- section displaying the user's profile details -->

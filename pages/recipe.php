@@ -133,7 +133,7 @@ require_once __DIR__ . '/../includes/header.php';
 
 ?>
 
-<main>
+<main class="container">
 
     <!-- ===================== -->
     <!-- Recipe main information -->
@@ -159,7 +159,6 @@ require_once __DIR__ . '/../includes/header.php';
         <strong>Average rating:</strong>
         <?php echo round($recipe['avg_rating'], 1); ?> ⭐
     </p>
-
 
     <!-- Display recipe image if available -->
     <?php if (!empty($recipe['image_url'])): ?>

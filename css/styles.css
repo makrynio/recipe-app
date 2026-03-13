@@ -1,4 +1,4 @@
-/* CSS Custom Properties (Variables) */
+/* CSS Custom Properties (Variables) - Define reusable color, spacing, and other values */
 :root {
     --color-white: #ffffff;
     --color-light-gray: #f5f5f5;
@@ -14,7 +14,7 @@
     --gap-lg: 1.25rem;
 }
 
-/* Basic style */
+/* Global reset and base styles - Ensure consistent box-sizing and basic element styling */
 * {
     box-sizing: border-box;
 }
@@ -42,13 +42,14 @@ a:focus {
     text-decoration: underline;
 }
 
-/* Shared layout */
+/* Layout containers - Consistent width, centering, and padding for main content areas */
 .container {
     width: min(90%, 1100px);
     margin: 0 auto;
+    padding: 20px 0;
 }
 
-/* Card-style elements with consistent styling */
+/* Card-style elements - Apply white background and border-radius to headers, footers, sections, and forms */
 .site-header,
 .site-footer,
 section,
@@ -57,7 +58,7 @@ form {
     border-radius: var(--border-radius);
 }
 
-/* Header and Footer borders */
+/* Header and footer specific styling - Add borders and spacing */
 .site-header {
     border-bottom: 1px solid var(--color-border);
 }
@@ -68,7 +69,7 @@ form {
     padding: var(--spacing-sm) 0;
 }
 
-/* Section and form styling */
+/* Section and form borders and spacing - Add borders, padding, and margins */
 section,
 form {
     border: 1px solid var(--color-border);
@@ -76,12 +77,13 @@ form {
     margin-bottom: var(--spacing-md);
 }
 
-/* Flexbox column layout utility */
+/* Utility classes - Flexbox column layout for reusable components */
 .flex-column {
     display: flex;
     flex-direction: column;
 }
 
+/* Header layout - Stack title and nav vertically on mobile */
 .site-header .container {
     display: flex;
     flex-direction: column;
@@ -103,12 +105,12 @@ form {
     padding: 0;
 }
 
-/* Main content */
+/* Main content area - Increase padding for main content */
 main.container {
     padding: var(--spacing-lg) 0;
 }
 
-/* Form inputs */
+/* Form elements - Global styling for inputs, selects, textareas, and buttons */
 input,
 select,
 textarea,
@@ -123,7 +125,7 @@ button {
     cursor: pointer;
 }
 
-/* Desktop */
+/* Desktop responsive styles - Adjust layouts for larger screens */
 @media (min-width: 768px) {
     .site-header .container {
         flex-direction: row;
@@ -136,15 +138,113 @@ button {
         gap: var(--gap-lg);
     }
 
-    /* Auth container with flexbox for form layout */
+    /* Authentication container - Enable flexbox for form layout on desktop */
     .auth-container {
         display: flex;
         flex-direction: column;
     }
 
-    /* Login form - 50% width, aligned to left */
+    /* Login and register forms - Set full width on desktop */
     #login-form,
     #register-form {
-        width: 50%;
+        width: 100%;
     }
+}
+
+/* Greeting message - Italic styling for user greetings */
+.greeting {
+    font-style: italic;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Hero section - Full-width image with cover fit */
+.hero-image {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+}
+
+/* Hero text margins - Adjust spacing for hero headings and paragraphs */
+.hero h1 {
+    margin-top: 5px;
+}
+
+.hero p {
+    margin-bottom: 5px;
+}
+
+/* Call-to-action buttons - Green button styling with hover effect */
+.cta-button {
+    display: inline-block;
+    padding: 12px 20px;
+    background-color: #2c7a4b;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.cta-button:hover {
+    background-color: #24663d;
+}
+
+/* Authentication page container - Styled container for login/register forms */
+.auth-container {
+    max-width: 520px;
+    padding: 32px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Authentication form inputs - Specific styling for inputs in auth forms */
+.auth-container input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    background-color: #fff;
+}
+
+/* Authentication form buttons - Green button styling for auth forms */
+.auth-container button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: #2c7a4b;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Login page flex layout - Two-column layout for login/register pages */
+.login-layout {
+    display: flex;
+    gap: 40px;
+    align-items: flex-end;
+}
+
+#login-form {
+    flex: 2;
+    width: 100%;
+}
+
+.auth-sidebar {
+    flex: 1;
+}
+
+/* Sidebar heading - Styling for headings in the auth sidebar */
+.auth-sidebar h2 {
+    font-size: 1.2rem;
+    line-height: 1.4;
+    margin-bottom: 16px;
+}
+
+/* Sidebar images - Styling for images in the auth sidebar */
+.sidebar-image {
+    width: 100%;
+    border-radius: 8px;
 }

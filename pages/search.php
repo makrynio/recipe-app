@@ -27,7 +27,7 @@ require_once __DIR__ . '/../includes/header.php';
 
 ?>
 
-<main>
+<main class="container">
 
     <h2>Search Recipes</h2>
 

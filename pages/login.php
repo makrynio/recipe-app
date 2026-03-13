@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
 }
 ?>
 <?php require_once __DIR__ . '/../includes/header.php'; // include site header - using __DIR__ for absolute path reliability ?>
-    <main class="auth-container"> <!-- main content area for the login form -->
+    <main class="container"> <!-- main content area for the login form -->
         <h1>Log In</h1> <!-- page heading -->
 
         <?php if (!empty($errors)): ?> <!-- only render the error list if there are errors -->
@@ -50,7 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
                 <?php endforeach; ?>
             </ul>
         <?php endif; ?>
-
+<div class="login-layout">   <!-- FLEX WRAPPER -->
+    <div class="auth-container"> <!-- container for the login form -->
         <form id="login-form" method="POST" action="" novalidate> <!-- form submits via POST to this same page; novalidate disables browser built-in validation -->
             <label for="email">Email Address</label> <!-- label linked to the email input -->
             <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" required> <!-- email field; repopulates on failed submission, escaped to prevent XSS -->
@@ -59,9 +60,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
             <input type="password" id="password" name="password" required> <!-- password field; value is never repopulated for security -->
 
             <button type="submit">Log In</button> <!-- submits the form -->
+             <p>Don't have an account? <a href="/recipe-app/pages/register.php">Register</a></p> <!-- link to the registration page -->
         </form>
+    </div> <!-- end of auth-container -->
+        
+      <aside class="auth-sidebar">
+          <h2>Log in to explore recipes, save favourites and rate dishes.</h2>
 
-        <p>Don't have an account? <a href="/recipe-app/pages/register.php">Register</a></p> <!-- link to the registration page -->
+           <img src="/recipe-app/images/login-illustration.jpg"
+               alt="Chef cooking in a kitchen"
+               class="sidebar-image">
+       </aside>
+            
+          
+</div> <!-- end of FLEX WRAPPER -->        
     </main>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; // include site footer - using __DIR__ for absolute path reliability ?>

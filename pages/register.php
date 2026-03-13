@@ -59,8 +59,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
 }
 ?>
 <?php require_once __DIR__ . '/../includes/header.php'; // include site header - using __DIR__ for absolute path reliability ?>
-<main class="auth-container"> <!-- main content area for the registration form -->
-    <h1>Create an Account</h1> <!-- page heading -->
+<main class="container"> <!-- main content area for the registration form -->
+   
+    <h1>Create your free account</h1> <!-- page heading -->
+    
 
     <?php if (!empty($errors)): ?> <!-- only render the error list if there are errors -->
         <ul class="error-list"> <!-- unordered list to display validation errors -->
@@ -74,7 +76,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
         <p class="success-msg"><?php echo $success; ?></p>
         <!-- display the success message with login link (HTML is intentional here) -->
     <?php endif; ?>
+    
 
+<div class="login-layout">   <!-- FLEX WRAPPER -->
+ <div class="auth-container"> <!-- container for the registration form -->
     <form id="register-form" method="POST" action="" novalidate>
         <!-- form submits via POST to this same page; novalidate disables browser built-in validation -->
         <label for="name">Full Name</label> <!-- label linked to the name input -->
@@ -94,9 +99,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
         <!-- confirmation field; value is never repopulated for security -->
 
         <button type="submit">Register</button> <!-- submits the form -->
-    </form>
 
-    <p>Already have an account? <a href="/recipe-app/pages/login.php">Log in</a></p> <!-- link to the login page -->
+        <p>Already have an account? <a href="/recipe-app/pages/login.php">Log in</a></p> <!-- link to the login page -->
+    </form>
+    </div> <!-- end of auth-container -->
+    <aside class="auth-sidebar"> <!-- sidebar with additional information -->
+       <h2>Why join The Recipe Library?</h2>
+
+        <ul>
+            <li>Search recipes easily</li>
+            <li>Save your favourite dishes</li>
+            <li>Rate recipes you try</li>
+            <li>Share feedback with the community</li>
+        </ul>
+
+    </aside>
+</div> <!-- end of FLEX WRAPPER -->
+    
 </main>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; // include site footer - using __DIR__ for absolute path reliability ?>
