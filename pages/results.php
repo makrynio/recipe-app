@@ -1,4 +1,11 @@
-<?php
+﻿<?php
+
+// Purpose: Build and display filtered recipe search results.
+// This page can render standalone or be embedded under the search form.
+
+// ----------------------
+// Include dependencies
+// ----------------------
 
 // Include the database connection file
 // __DIR__ ensures a reliable absolute path regardless of script execution context
@@ -10,6 +17,7 @@ require_once __DIR__ . '/../includes/auth.php';
 // Ensure that only authenticated users can access the search results
 requireLogin();
 
+$isEmbeddedInSearch = isset($embedInSearch) && $embedInSearch === true;
 
 // ----------------------
 // Retrieve search parameters
@@ -24,7 +32,6 @@ $ingredient = $_GET['ingredient'] ?? '';
 $difficulty = $_GET['difficulty'] ?? '';
 $max_time = $_GET['max_time'] ?? '';
 $sort = $_GET['sort'] ?? '';
-
 
 // ----------------------
 // Base SQL query
@@ -51,7 +58,6 @@ WHERE recipes.is_published = 1
 $params = [];
 $types = "";
 
-
 // ----------------------
 // Apply filters
 // ----------------------
@@ -63,14 +69,12 @@ if (!empty($name)) {
     $types .= "s";
 }
 
-
 // Filter by category
 if (!empty($category)) {
     $sql .= " AND recipes.category_id = ?";
     $params[] = $category;
     $types .= "i";
 }
-
 
 // Filter by ingredient
 if (!empty($ingredient)) {
@@ -79,14 +83,12 @@ if (!empty($ingredient)) {
     $types .= "s";
 }
 
-
 // Filter by difficulty
 if (!empty($difficulty)) {
     $sql .= " AND recipes.difficulty = ?";
     $params[] = $difficulty;
     $types .= "s";
 }
-
 
 // Filter by maximum cooking time
 if (!empty($max_time)) {
@@ -95,14 +97,12 @@ if (!empty($max_time)) {
     $types .= "i";
 }
 
-
 // ----------------------
 // Group results
 // ----------------------
 
 // Required because AVG() and COUNT() are used
 $sql .= " GROUP BY recipes.id";
-
 
 // ----------------------
 // Sorting options
@@ -117,7 +117,6 @@ if ($sort === "name") {
 } elseif ($sort === "newest") {
     $sql .= " ORDER BY recipes.created_at DESC";
 }
-
 
 // ----------------------
 // Prepare and execute query
@@ -134,61 +133,45 @@ if ($params) {
 $stmt->execute();
 $result = $stmt->get_result();
 
-
 // Include page header
-require_once __DIR__ . '/../includes/header.php';
+if (!$isEmbeddedInSearch) {
+    require_once __DIR__ . '/../includes/header.php';
+}
 
 ?>
 
+<?php if (!$isEmbeddedInSearch): ?>
 <main class="container">
+<?php else: ?>
+<section class="search-results-inline">
+<?php endif; ?>
 
     <h2>Search Results</h2>
 
     <?php if ($result->num_rows > 0): ?>
 
-        <div class="recipes">
+        <ul class="recipe-list">
 
             <?php while ($row = $result->fetch_assoc()): ?>
 
-                <div class="recipe-card">
-
-                    <!-- Display recipe title -->
-                    <h3><?php echo htmlspecialchars($row['title']); ?></h3>
-
-                    <!-- Display recipe category -->
-                    <p>
-                        <strong>Category:</strong>
-                        <?php echo htmlspecialchars($row['category_name'] ?? 'Uncategorised'); ?>
-                    </p>
-
-                    <!-- Display cooking time -->
-                    <p>
-                        <strong>Cooking time:</strong>
-                        <?php echo $row['cook_time_min'] ?? 'N/A'; ?> minutes
-                    </p>
-
-                    <!-- Display difficulty -->
-                    <p>
-                        <strong>Difficulty:</strong>
-                        <?php echo htmlspecialchars($row['difficulty']); ?>
-                    </p>
-
-                    <!-- Display average rating only once at least one rating exists -->
-                    <?php if ($row['rating_count'] > 0): ?>
-                        <p>
-                            <strong>Rating:</strong>
-                            <?php echo round($row['avg_rating'], 1); ?> / 5 ⭐
-                        </p>
-                    <?php endif; ?>
-
-                    <!-- Link to the recipe details page -->
-                    <a href="recipe.php?id=<?php echo $row['id']; ?>">View Recipe</a>
-
-                </div>
+                <li>
+                    <a href="recipe.php?id=<?php echo $row['id']; ?>">
+                        <?php if (!empty($row['image_url'])): ?>
+                            <img src="<?php echo htmlspecialchars($row['image_url']); ?>" alt="Recipe thumbnail" class="recipe-thumbnail">
+                        <?php endif; ?>
+                        <?php echo htmlspecialchars($row['title']); ?> — <?php echo htmlspecialchars($row['category_name'] ?? 'Uncategorised'); ?>
+                        <!-- Star glyphs built from rounded average rating, matching the recipe detail page format -->
+                        <small>(<?php echo $row['cook_time_min'] ?? 'N/A'; ?> min · <?php echo htmlspecialchars($row['difficulty']); ?><?php if ($row['rating_count'] > 0):
+                            $r = (float) $row['avg_rating'];
+                            $filled = max(0, min(5, (int) round($r)));
+                            $stars = str_repeat('&#9733;', $filled) . str_repeat('&#9734;', 5 - $filled);
+                        ?> · <span class="rating-stars" style="font-size:inherit;"><?php echo $stars; ?></span> <?php echo number_format($r, 1); ?><?php endif; ?>)</small>
+                    </a>
+                </li>
 
             <?php endwhile; ?>
 
-        </div>
+        </ul>
 
     <?php else: ?>
 
@@ -196,9 +179,15 @@ require_once __DIR__ . '/../includes/header.php';
 
     <?php endif; ?>
 
+<?php if (!$isEmbeddedInSearch): ?>
 </main>
+<?php else: ?>
+</section>
+<?php endif; ?>
 
 <?php
 // Include the website footer
-require_once __DIR__ . '/../includes/footer.php';
+if (!$isEmbeddedInSearch) {
+    require_once __DIR__ . '/../includes/footer.php';
+}
 ?>

@@ -1,9 +1,10 @@
-/* CSS Custom Properties (Variables) - Define reusable color, spacing, and other values */
+﻿/* CSS Custom Properties (Variables) - Define reusable color, spacing, and other values */
 :root {
     --color-white: #ffffff;
     --color-light-gray: #f5f5f5;
     --color-dark-gray: #222;
     --color-border: #ddd;
+    --color-card-bg: #f4f4f4;       /* Shared background colour for card-style list items */
     --border-radius: 8px;
     --spacing-xs: 0.75rem;
     --spacing-sm: 1rem;
@@ -19,6 +20,7 @@
     box-sizing: border-box;
 }
 
+/* Page base typography and colours - Applies global font, spacing baseline and default text/background colours. */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -27,16 +29,19 @@ body {
     color: var(--color-dark-gray);
 }
 
+/* Global image scaling - Prevents images from overflowing their container while keeping aspect ratio. */
 img {
     max-width: 100%;
     height: auto;
 }
 
+/* Link base style - Makes links inherit surrounding text color and removes underline by default. */
 a {
     color: inherit;
     text-decoration: none;
 }
 
+/* Link interaction style - Restores underline on hover/focus for better affordance and accessibility. */
 a:hover,
 a:focus {
     text-decoration: underline;
@@ -77,10 +82,356 @@ form {
     margin-bottom: var(--spacing-md);
 }
 
+/* Account sections wrapper - Display main account sections side by side */
+.account-sections {
+    display: flex;
+    gap: var(--gap-md);
+}
+
+/* Equal column sizing - Makes account profile and favourites sections share available width. */
+.account-info,
+.account-favourites {
+    flex: 1;
+}
+
+/* Account info section - Flex layout for profile text and picture */
+.account-info {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--gap-md);
+}
+
+/* Profile picture appearance - Sets a fixed circular avatar and prevents shrinking in flex layouts. */
+.profile-picture {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* Account favourites section - wrapping grid layout */
+.account-favourites ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap-sm);
+}
+
+/* Shared base styles for list items in both the favourites section and search results -
+   consolidated to avoid duplication; layout-specific rules are kept on each selector below */
+.account-favourites li,
+.recipe-list li {
+    border: none;
+    border-radius: 6px;
+    padding: 0;
+    background-color: var(--color-card-bg);
+    box-sizing: border-box;
+    list-style: none;
+}
+
+/* Favourite card width behaviour - Allows cards to wrap responsively with a sensible minimum width. */
+.account-favourites li {
+    flex: 1 1 250px;
+}
+
+/* Shared clickable card link style - Expands anchor to full card area and applies spacing/typography. */
+.account-favourites li a,
+.recipe-list li a {
+    display: block;
+    padding: 12px 16px;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+/* Shared card hover treatment - Adds subtle visual feedback for interactive list cards. */
+.account-favourites li a:hover,
+.recipe-list li a:hover {
+    background-color: #e9e9e9;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Search results list - vertical stack layout */
+.recipe-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-sm);
+}
+
+/* Recipe page layout - image-focused left column and details on the right */
+.recipe-page section {
+    border: none;
+    padding: 0;
+    margin-bottom: var(--spacing-lg);
+    background-color: transparent;
+}
+
+/* Two-column, two-row hero grid: title/image on the left, meta/forms on the right */
+.recipe-hero {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto auto;
+    gap: var(--gap-lg);
+    align-items: start;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+}
+
+/* Recipe title and description block - occupies column 1, row 1 of the hero grid */
+.recipe-intro {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+/* Recipe title spacing reset - Removes default heading top spacing for tighter hero alignment. */
+.recipe-intro h2 {
+    margin: 0;
+}
+
+/* Recipe image column - column 1, row 2; sticky so it remains visible while scrolling the right column */
+.recipe-media {
+    grid-column: 1;
+    grid-row: 2;
+    position: sticky;
+    top: 1rem;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+/* Meta details, source link and action forms - column 2, row 2; flex column so forms pin to the bottom */
+.recipe-summary {
+    grid-column: 2;
+    grid-row: 2;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+}
+
+/* Flex row container holding the star rating form and save/unsave form side by side;
+   margin-top: auto pushes the group to the bottom of the summary column */
+.recipe-form-group {
+    margin-top: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: var(--gap-sm);
+}
+
+/* Star rating form - grows to fill available width within the form group */
+.recipe-rating-form {
+    margin: 0;
+    flex: 1 1 auto;
+}
+
+/* Star rating spacing in summary - Removes extra bottom space so form aligns with action button. */
+.recipe-rating-form .star-rating {
+    margin-bottom: 0;
+}
+
+/* Star rating legend sizing - Uses compact legend spacing for the summary action area. */
+.recipe-rating-form .star-rating legend {
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+}
+
+/* Star icon sizing in summary - Scales stars to balance readability with compact layout constraints. */
+.recipe-rating-form .star-rating label {
+    font-size: 1.9rem;
+    line-height: 1;
+    padding: 0 1px;
+}
+
+/* Recipe cover image - fills the full width of the left column proportionally */
+.recipe-cover {
+    width: 100%;
+    height: auto;
+    border-radius: var(--border-radius);
+    display: block;
+}
+
+/* Placeholder shown when no image is uploaded; maintains the same visual space */
+.recipe-cover-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    background-color: #ececec;
+    border: 1px dashed #bdbdbd;
+    min-height: 320px;
+    width: 100%;
+    align-self: center;
+}
+
+/* Description spacing - Keeps recipe summary text close to title while preserving section rhythm. */
+.recipe-description {
+    margin-top: 0;
+    margin-bottom: var(--spacing-md);
+}
+
+/* Metadata list layout - Displays recipe facts in a compact vertical grid. */
+.recipe-meta {
+    display: grid;
+    gap: 0.45rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Metadata paragraph reset - Removes default margins for consistent key/value spacing. */
+.recipe-meta p {
+    margin: 0;
+}
+
+/* Metadata label width - Aligns value text by reserving consistent width for strong labels. */
+.recipe-meta strong {
+    display: inline-block;
+    min-width: 140px;
+}
+
+/* Shared bottom spacing for source and rating rows - Keeps summary blocks visually consistent. */
+.recipe-source,
+.recipe-average-rating {
+    margin: 0 0 var(--spacing-sm) 0;
+}
+
+/* Average rating row - aligns star glyphs, numeric score and rating count inline */
+.recipe-average-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+}
+
+/* Star glyph display for average rating - amber colour follows standard star rating convention */
+.rating-stars {
+    font-size: 1.5rem;
+    line-height: 1;
+    letter-spacing: 0.05em;
+    color: #d28c18;
+}
+
+/* Recipe action form spacing reset - Removes default form margin inside the action container. */
+.recipe-actions form {
+    margin-bottom: 0;
+}
+
+/* Save/Unsave button wrapper - fixed width so it does not grow alongside the rating form */
+.recipe-actions {
+    flex: 0 0 auto;
+}
+
+/* Action button sizing - Prevents action button from stretching full width inside flex row. */
+.recipe-actions button {
+    width: auto;
+    margin-bottom: 0;
+}
+
+/* Save button custom variant - Highlights positive action with a green theme. */
+.recipe-actions button[name="add_favourite"] {
+    background-color: #3f8f5f;
+    color: white;
+    border: 1px solid #357a51;
+}
+
+/* Save button interaction state - Darkens background for hover/focus accessibility feedback. */
+.recipe-actions button[name="add_favourite"]:hover,
+.recipe-actions button[name="add_favourite"]:focus {
+    background-color: #357a51;
+}
+
+/* Details section grid - Splits ingredients and steps into two equal columns on larger screens. */
+.recipe-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--gap-md);
+}
+
+/* Details card container - Provides card styling for each details column. */
+.recipe-details-column {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-sm);
+}
+
+/* Details heading spacing reset - Removes default top margin in detail cards. */
+.recipe-details-column h3 {
+    margin-top: 0;
+}
+
+/* Ingredients/steps list baseline - Keeps list indentation while removing default top/bottom margins. */
+.recipe-ingredients-list,
+.recipe-steps-list {
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+/* Step paragraph spacing - Adds small separation between instruction text and optional timing line. */
+.recipe-steps-list li p {
+    margin: 0 0 0.5rem 0;
+}
+
+/* Recipe thumbnail styling */
+.recipe-thumbnail {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+/* Larger thumbnail inside search results list */
+.recipe-list .recipe-thumbnail {
+    width: 100px;
+    height: 100px;
+}
+
 /* Utility classes - Flexbox column layout for reusable components */
 .flex-column {
     display: flex;
     flex-direction: column;
+}
+
+/* Profile edit form styles */
+.hidden {
+    display: none;
+}
+
+/* Profile edit form container - Visually separates inline edit controls from profile summary text. */
+#edit-profile-form {
+    margin-top: 1rem;
+    border-top: 1px solid #ccc;
+    padding-top: 1rem;
+}
+
+/* Profile edit label layout - Stacks labels above controls for clearer form readability. */
+#edit-profile-form label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.75rem;
+}
+
+/* Profile edit input style - Uses compact padding and subtle border for inline profile fields. */
+#edit-profile-form input {
+    padding: 0.5rem;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+}
+
+/* Profile form button spacing - Adds separation between side-by-side edit action buttons. */
+#edit-profile-form .cta-button {
+    margin-right: 0.5rem;
 }
 
 /* Header layout - Stack title and nav vertically on mobile */
@@ -91,11 +442,13 @@ form {
     padding: var(--spacing-sm) 0;
 }
 
+/* Site title typography - Defines heading size and removes default margin offset. */
 .site-title {
     margin: 0;
     font-size: 1.5rem;
 }
 
+/* Navigation list layout - Uses flexible stacked links by default for narrow screens. */
 .nav-list {
     list-style: none;
     display: flex;
@@ -121,13 +474,147 @@ button {
     font: inherit;
 }
 
-button {
-    cursor: pointer;
+/* Search form layout - two columns with three sections each on desktop */
+.search-form-columns {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--gap-md);
+    margin-bottom: var(--spacing-sm);
 }
 
-/* Remove gap between stacked forms */
-.stacked-forms form {
+/* Search form column stack - Groups related fields vertically with consistent spacing. */
+.search-form-column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-sm);
+}
+
+/* Search field wrapper - Ensures label/input pairs are vertically aligned as a unit. */
+.search-field {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Search field label style - Emphasizes labels and keeps consistent distance from controls. */
+.search-field label {
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+}
+
+/* Search control spacing reset - Removes global input bottom margin inside grouped field wrappers. */
+.search-field input,
+.search-field select {
     margin-bottom: 0;
+}
+
+/* Search control touch target - Provides consistent control height across text/number/select fields. */
+.search-field input[type="text"],
+.search-field input[type="number"],
+.search-field select {
+    height: 44px;
+}
+
+/* Responsive behavior for account sections */
+@media (max-width: 900px) {
+    /* Mobile hero grid - Stacks hero content into a single column for narrow screens. */
+    .recipe-hero {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+
+    /* Mobile grid item reset - Lets hero sections follow normal flow after stacking. */
+    .recipe-intro,
+    .recipe-media,
+    .recipe-summary {
+        grid-column: auto;
+        grid-row: auto;
+    }
+
+    /* Mobile media behavior - Disables sticky positioning so image scrolls naturally on small devices. */
+    .recipe-media {
+        position: static;
+    }
+
+    /* Mobile image width - Ensures recipe cover spans full available container width. */
+    .recipe-cover {
+        width: 100%;
+    }
+
+    /* Mobile metadata labels - Stacks label/value text when horizontal space is limited. */
+    .recipe-meta strong {
+        min-width: 0;
+        display: block;
+    }
+
+    /* Mobile details layout - Converts two-column detail cards to a single-column flow. */
+    .recipe-details {
+        grid-template-columns: 1fr;
+    }
+
+    /* Mobile account layout - Places account sections in a vertical stack. */
+    .account-sections {
+        flex-direction: column;
+    }
+
+    /* Mobile account section width - Forces each section to use full row width. */
+    .account-info,
+    .account-favourites {
+        width: 100%;
+    }
+
+    /* Mobile favourites list display - Switches card list from flex wrapping to block flow. */
+    .account-favourites ul {
+        display: block;
+    }
+
+    /* Mobile favourites item width - Ensures each saved recipe item occupies full width. */
+    .account-favourites li {
+        flex: none;
+        width: 100%;
+    }
+
+    /* Mobile thumbnail sizing - Uses slightly smaller square thumbnails for compact layouts. */
+    .profile-picture,
+    .recipe-thumbnail {
+        width: 60px;
+        height: 60px;
+    }
+
+    /* Mobile full-width buttons - Expands key button styles for easier tapping on small screens. */
+    .center-button,
+    .button-secondary,
+    .cta-button {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Tablet/desktop search layout - Splits search form into two columns when width allows. */
+@media (min-width: 768px) {
+    .search-form-columns {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
+    }
+}
+
+/* Narrow mobile account adjustments - Improves profile section stacking on very small screens. */
+@media (max-width: 500px) {
+    /* Very small-screen account info layout - Stacks profile text and image vertically. */
+    .account-info {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    /* Very small-screen avatar centering - Centers profile picture within the stacked layout. */
+    .profile-picture {
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* Global button cursor - Indicates interactive intent for all button elements. */
+button {
+    cursor: pointer;
 }
 
 /* Star rating widget */
@@ -137,17 +624,20 @@ button {
     margin-bottom: var(--spacing-sm);
 }
 
+/* Star rating legend emphasis - Makes legend text stand out from surrounding body content. */
 .star-rating legend {
     font-weight: bold;
     margin-bottom: 0.5rem;
 }
 
+/* Hide radio controls visually - Keeps native inputs accessible while displaying custom star labels. */
 .star-rating input[type="radio"] {
     display: none;
 }
 
+/* Star label appearance - Styles stars as interactive icon controls for rating selection. */
 .star-rating label {
-    font-size: 2rem;
+    font-size: 2.4rem;
     color: #ccc;
     cursor: pointer;
     transition: color 0.15s;
@@ -156,18 +646,21 @@ button {
     padding: 0 2px;
 }
 
+/* Active star state - Applies highlighted colour to selected/hovered star labels. */
 .star-rating label.active {
     color: #4a90d9;
 }
 
 /* Desktop responsive styles - Adjust layouts for larger screens */
 @media (min-width: 768px) {
+    /* Desktop header layout - Places site title and navigation on a single horizontal row. */
     .site-header .container {
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
     }
 
+    /* Desktop nav spacing - Converts nav list into a horizontal menu with larger gaps. */
     .nav-list {
         flex-direction: row;
         gap: var(--gap-lg);
@@ -205,6 +698,7 @@ button {
     margin-top: 5px;
 }
 
+/* Hero paragraph spacing - Reduces bottom spacing to keep heading/summary visually grouped. */
 .hero p {
     margin-bottom: 5px;
 }
@@ -220,8 +714,34 @@ button {
     font-weight: 600;
 }
 
+/* CTA hover state - Darkens green button background to signal interactivity. */
 .cta-button:hover {
     background-color: #24663d;
+}
+
+/* Secondary button for account info */
+.button-secondary {
+    display: inline-block;
+    padding: 10px 16px;
+    background-color: #e0e0e0;
+    color: #333;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Secondary button hover state - Slightly darkens neutral button on hover for feedback. */
+.button-secondary:hover {
+    background-color: #d1d1d1;
+}
+
+/* Center button utility class */
+.center-button {
+    display: block;
+    margin: 0 auto;
+    width: fit-content;
 }
 
 /* Authentication page container - Styled container for login/register forms */
@@ -243,6 +763,56 @@ button {
     background-color: #fff;
 }
 
+/* Inline validation feedback for authentication forms */
+.auth-container input.input-invalid {
+    border-color: #b42318;
+    background-color: #fff3f2;
+}
+
+/* Valid fields keep a subtle green border so users can see what already passed validation. */
+.auth-container input.input-valid {
+    border-color: #2c7a4b;
+}
+
+/* Hint text is used for proactive guidance such as the password-strength rule. */
+.field-hint {
+    margin: -0.5rem 0 var(--spacing-sm);
+    font-size: 0.9rem;
+    color: #5f5f5f;
+}
+
+/* Error text appears directly under the related input for immediate correction feedback. */
+.field-error {
+    margin: -0.5rem 0 var(--spacing-sm);
+    font-size: 0.9rem;
+    color: #b42318;
+}
+
+/* Hidden error element state - Keeps error placeholders in DOM while not occupying layout space. */
+.field-error[hidden] {
+    display: none;
+}
+
+/* Server-side error list container - Styles fallback validation messages returned by PHP. */
+.error-list {
+    margin: 0 0 var(--spacing-sm);
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2a6a0;
+    border-radius: 8px;
+    background-color: #fff3f2;
+    color: #8a1f17;
+}
+
+/* Success banner is shown after registration completes on the server side. */
+.success-msg {
+    margin: 0 0 var(--spacing-sm);
+    padding: 0.75rem 1rem;
+    border: 1px solid #a7d3b5;
+    border-radius: 8px;
+    background-color: #f3fbf5;
+    color: #1d5f35;
+}
+
 /* Authentication form buttons - Green button styling for auth forms */
 .auth-container button {
     width: 100%;
@@ -260,15 +830,41 @@ button {
     display: flex;
     gap: 40px;
     align-items: flex-end;
+    flex-wrap: wrap;
 }
 
+/* Auth layout child sizing - Gives both columns flexible widths so they can wrap before overflowing. */
+.login-layout .auth-container,
+.login-layout .auth-sidebar {
+    flex: 1 1 320px;
+}
+
+/* Login form width behavior - Lets form area consume most horizontal space in auth layout. */
 #login-form {
     flex: 2;
     width: 100%;
 }
 
+/* Auth sidebar width behavior - Allocates the secondary column for helper text/imagery. */
 .auth-sidebar {
     flex: 1;
+}
+
+/* Auth zoom/mobile stacking - Forces vertical stacking when width is reduced (including browser zoom). */
+@media (max-width: 1100px) {
+    .login-layout {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-md);
+    }
+
+    .login-layout .auth-container,
+    .login-layout .auth-sidebar {
+        flex: 1 1 auto;
+        max-width: none;
+        min-width: 0;
+        width: 100%;
+    }
 }
 
 /* Sidebar heading - Styling for headings in the auth sidebar */

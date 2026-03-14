@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 // Check whether a recipe is already saved by the user
 function isFavourite($conn, $userId, $recipeId) {
@@ -29,8 +29,9 @@ function removeFavourite($conn, $userId, $recipeId) {
 
 // Get all favourite recipes for a user
 function getUserFavourites($conn, $userId) {
+    // image_url is included so the account page can render recipe thumbnails alongside saved items.
     $stmt = mysqli_prepare($conn, '
-        SELECT recipes.id, recipes.title, recipes.cook_time_min, categories.name AS category_name
+        SELECT recipes.id, recipes.title, recipes.cook_time_min, recipes.image_url, categories.name AS category_name
         FROM favourites
         JOIN recipes ON favourites.recipe_id = recipes.id
         LEFT JOIN categories ON recipes.category_id = categories.id

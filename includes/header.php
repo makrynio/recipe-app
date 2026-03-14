@@ -1,4 +1,4 @@
-<!--
+﻿<!--
     Purpose: Shared site header for the Recipe Library application.
     Contains: Site title and main navigation links.
     Notes: Navigation changes depending on whether the user is logged in.
@@ -11,7 +11,6 @@ require_once __DIR__ . '/helper.php';
 $name = getCurrentUserName();
 $greeting = getGreeting();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">

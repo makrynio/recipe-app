@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../includes/db.php'; // establish the database connection ($conn) - using __DIR__ for absolute path reliability
 require_once __DIR__ . '/../includes/auth.php'; // load session/auth helper functions - using __DIR__ for absolute path reliability
 
@@ -52,12 +52,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
         <?php endif; ?>
 <div class="login-layout">   <!-- FLEX WRAPPER -->
     <div class="auth-container"> <!-- container for the login form -->
-        <form id="login-form" method="POST" action="" novalidate> <!-- form submits via POST to this same page; novalidate disables browser built-in validation -->
+        <!-- data-client-validation is used by main.js to attach the login-specific client checks -->
+        <form id="login-form" method="POST" action="" novalidate data-client-validation="login"> <!-- form submits via POST to this same page; novalidate disables browser built-in validation -->
             <label for="email">Email Address</label> <!-- label linked to the email input -->
-            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" required> <!-- email field; repopulates on failed submission, escaped to prevent XSS -->
+            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" required autocomplete="email" inputmode="email" spellcheck="false" autocapitalize="off"> <!-- email field; repopulates on failed submission, escaped to prevent XSS -->
 
             <label for="password">Password</label> <!-- label linked to the password input -->
-            <input type="password" id="password" name="password" required> <!-- password field; value is never repopulated for security -->
+            <input type="password" id="password" name="password" required autocomplete="current-password"> <!-- password field; value is never repopulated for security -->
 
             <button type="submit">Log In</button> <!-- submits the form -->
              <p>Don't have an account? <a href="/recipe-app/pages/register.php">Register</a></p> <!-- link to the registration page -->

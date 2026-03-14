@@ -1,7 +1,6 @@
-<?php include 'includes/header.php'; ?>
+﻿<?php include 'includes/header.php'; ?>
 
 <main class="container">
-
 
 <section class="hero">
     <h1>Discover recipes you'll love to cook</h1>

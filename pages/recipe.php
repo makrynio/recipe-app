@@ -1,4 +1,8 @@
-<?php
+﻿<?php
+
+// ----------------------
+// Include dependencies
+// ----------------------
 
 // Include the database connection
 // __DIR__ ensures the correct absolute path regardless of execution context
@@ -16,11 +20,9 @@ require_once __DIR__ . '/../includes/ratings.php';
 // Ensure the user is authenticated before accessing this page
 requireLogin();
 
-
 // Retrieve recipe ID from the URL query parameter
 // Example: recipe.php?id=3
 $recipe_id = $_GET['id'] ?? 0;
-
 
 // ----------------------
 // Fetch main recipe information
@@ -62,7 +64,6 @@ if ($result->num_rows === 0) {
 // Store recipe data
 $recipe = $result->fetch_assoc();
 
-
 // ----------------------
 // Fetch ingredients
 // ----------------------
@@ -82,7 +83,6 @@ $stmt->bind_param("i", $recipe_id);
 $stmt->execute();
 
 $ingredients = $stmt->get_result();
-
 
 // ----------------------
 // Fetch cooking steps
@@ -104,7 +104,6 @@ $stmt->execute();
 
 $steps = $stmt->get_result();
 
-
 // ----------------------
 // Favourite recipe logic
 // ----------------------
@@ -123,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         removeFavourite($conn, $userId, $recipe_id);
     }
 
-    if (isset($_POST['submit_rating'])) {
+    if (isset($_POST['rating'])) {
         $rating = (int) ($_POST['rating'] ?? 0);
 
         if ($rating >= 1 && $rating <= 5) {
@@ -142,171 +141,181 @@ $isFavourite = isFavourite($conn, $userId, $recipe_id);
 // Fetch the current user's existing rating for this recipe (if any)
 $userRating = getUserRating($conn, $userId, $recipe_id);
 
-
 // Include the website header (navigation and layout)
 require_once __DIR__ . '/../includes/header.php';
 
 ?>
 
-<main class="container">
+<main class="container recipe-page">
 
-    <!-- ===================== -->
-    <!-- Recipe main information -->
-    <!-- ===================== -->
+    <section class="recipe-hero">
+        <div class="recipe-intro">
+            <h2><?php echo htmlspecialchars($recipe['title']); ?></h2>
 
-    <h2><?php echo htmlspecialchars($recipe['title']); ?></h2>
+            <p class="recipe-description"><?php echo htmlspecialchars($recipe['description'] ?? 'Description not specified'); ?></p>
 
-    <p><strong>Category:</strong> <?php echo htmlspecialchars($recipe['category_name'] ?? 'Uncategorised'); ?></p>
+            <?php
+            // Compute average rating values for display
+            $avgRating    = (float) $recipe['avg_rating'];          // Cast to float for arithmetic
+            $ratingCount  = (int)   $recipe['rating_count'];         // Total number of ratings submitted
+            $displayRating = number_format($avgRating, 1);           // Format to one decimal place e.g. 4.0
 
-    <p><strong>Author:</strong> <?php echo htmlspecialchars($recipe['author_name']); ?></p>
+            // Build the star glyph string from the rounded average (clamped to 0–5)
+            $filledStars = max(0, min(5, (int) round($avgRating)));   // Filled ★ count
+            $emptyStars  = 5 - $filledStars;                         // Remaining ☆ count
 
-    <p><strong>Difficulty:</strong> <?php echo htmlspecialchars($recipe['difficulty']); ?></p>
+            // Concatenate Unicode filled (&#9733; ★) and empty (&#9734; ☆) star characters
+            $starVisual = str_repeat('&#9733;', $filledStars) . str_repeat('&#9734;', $emptyStars);
+            ?>
+            <p class="recipe-average-rating">
+                <span class="rating-stars" aria-hidden="true"><?php echo $starVisual; ?></span>
+                <?php echo $displayRating; ?>
+                (<?php echo $ratingCount; ?> <?php echo $ratingCount === 1 ? 'rating' : 'ratings'; ?>)
+            </p>
+        </div>
 
-    <p><strong>Servings:</strong> <?php echo $recipe['servings'] ?? 'N/A'; ?></p>
-
-    <p><strong>Preparation time:</strong> <?php echo $recipe['prep_time_min'] ?? 'N/A'; ?> minutes</p>
-
-    <p><strong>Cooking time:</strong> <?php echo $recipe['cook_time_min'] ?? 'N/A'; ?> minutes</p>
-
-
-    <!-- Display recipe image if available -->
-    <?php if (!empty($recipe['image_url'])): ?>
-        <img src="<?php echo htmlspecialchars($recipe['image_url']); ?>" style="max-width:400px;">
-    <?php endif; ?>
-
-
-    <!-- Display recipe description -->
-    <p><?php echo htmlspecialchars($recipe['description'] ?? 'Description not specified'); ?></p>
-
-
-    <!-- Display original source link if provided -->
-    <?php if (!empty($recipe['source_url'])): ?>
-        <p>
-            Source:
-            <a href="<?php echo htmlspecialchars($recipe['source_url']); ?>" target="_blank">
-                View original recipe
-            </a>
-        </p>
-    <?php endif; ?>
-
-
-    <!-- Display average rating only once at least one rating exists -->
-    <?php if ($recipe['rating_count'] > 0): ?>
-        <p>
-            <strong>Average rating:</strong>
-            <?php echo round($recipe['avg_rating'], 1); ?> / 5 ⭐
-            (<?php echo $recipe['rating_count']; ?> <?php echo $recipe['rating_count'] === 1 ? 'rating' : 'ratings'; ?>)
-        </p>
-    <?php endif; ?>
-
-
-    <!-- ===================== -->
-    <!-- Rate this recipe -->
-    <!-- ===================== -->
-
-    <h3><?php echo $userRating ? 'Update your rating' : 'Rate this recipe'; ?></h3>
-
-    <div class="stacked-forms">
-
-        <form method="POST" id="rating-form">
-
-            <fieldset class="star-rating">
-                <legend>Your rating</legend>
-                <?php for ($i = 1; $i <= 5; $i++): ?>
-                    <input
-                        type="radio"
-                        id="star<?php echo $i; ?>"
-                        name="rating"
-                        value="<?php echo $i; ?>"
-                        <?php echo ($userRating && (int)$userRating['rating'] === $i) ? 'checked' : ''; ?>
-                        required
-                    >
-                    <label for="star<?php echo $i; ?>">&#9733;</label>
-                <?php endfor; ?>
-            </fieldset>
-
-            <button type="submit" name="submit_rating">
-                <?php echo $userRating ? 'Update rating' : 'Submit rating'; ?>
-            </button>
-
-        </form>
-
-
-        <!-- ===================== -->
-        <!-- Favourite button -->
-        <!-- ===================== -->
-
-        <form method="POST">
-
-            <?php if ($isFavourite): ?>
-                <button type="submit" name="remove_favourite">Unsave Recipe</button>
+        <div class="recipe-media">
+            <?php if (!empty($recipe['image_url'])): ?>
+                <img
+                    src="<?php echo htmlspecialchars($recipe['image_url']); ?>"
+                    alt="<?php echo htmlspecialchars($recipe['title']); ?>"
+                    class="recipe-cover"
+                >
             <?php else: ?>
-                <button type="submit" name="add_favourite">Save Recipe</button>
+                <div class="recipe-cover recipe-cover-placeholder">No image available</div>
+            <?php endif; ?>
+        </div>
+
+        <div class="recipe-summary">
+
+            <div class="recipe-meta">
+                <p><strong>Category:</strong> <?php echo htmlspecialchars($recipe['category_name'] ?? 'Uncategorised'); ?></p>
+                <p><strong>Author:</strong> <?php echo htmlspecialchars($recipe['author_name']); ?></p>
+                <p><strong>Difficulty:</strong> <?php echo htmlspecialchars($recipe['difficulty']); ?></p>
+                <p><strong>Servings:</strong> <?php echo $recipe['servings'] ?? 'N/A'; ?></p>
+                <p><strong>Preparation time:</strong> <?php echo $recipe['prep_time_min'] ?? 'N/A'; ?> minutes</p>
+                <p><strong>Cooking time:</strong> <?php echo $recipe['cook_time_min'] ?? 'N/A'; ?> minutes</p>
+            </div>
+             <?php if (!empty($recipe['source_url'])): ?>
+                <p class="recipe-source">
+                    <strong>Source:</strong>
+                    <a href="<?php echo htmlspecialchars($recipe['source_url']); ?>" target="_blank" rel="noopener noreferrer">
+                        View original recipe
+                    </a>
+                </p>
             <?php endif; ?>
 
-        </form>
+            <div class="recipe-form-group">
+                <!-- data-auto-submit="true" tells main.js to submit this form immediately when a star is selected -->
+                <!-- A <noscript> fallback button is provided for users with JavaScript disabled -->
+                <form method="POST" id="rating-form" data-auto-submit="true" class="recipe-rating-form">
 
-    </div>
+                    <fieldset class="star-rating">
+                        <!-- Show "Update your rating" if the user has already rated, otherwise invite them to rate -->
+                        <legend><?php echo $userRating ? 'Update your rating' : 'Rate this recipe'; ?></legend>
+                        <?php for ($i = 1; $i <= 5; $i++): ?>
+                            <input
+                                type="radio"
+                                id="star<?php echo $i; ?>"
+                                name="rating"
+                                value="<?php echo $i; ?>"
+                                <?php echo ($userRating && (int)$userRating['rating'] === $i) ? 'checked' : ''; ?>
+                                required
+                            >
+                            <label for="star<?php echo $i; ?>">&#9733;</label>
+                        <?php endfor; ?>
+                    </fieldset>
 
+                    <!-- Fallback submit button for users without JavaScript; with JS enabled, selecting a star auto-submits. -->
+                    <noscript>
+                        <button type="submit" name="submit_rating">
+                            <?php echo $userRating ? 'Update rating' : 'Submit rating'; ?>
+                        </button>
+                    </noscript>
 
-    <!-- ===================== -->
-    <!-- Ingredients section -->
-    <!-- ===================== -->
+                </form>
 
-    <h3>Ingredients</h3>
+                <div class="stacked-forms recipe-actions">
 
-    <ul>
+                    <form method="POST">
 
-        <?php while ($row = $ingredients->fetch_assoc()): ?>
+                        <?php if ($isFavourite): ?>
+                            <button type="submit" name="remove_favourite">Unsave Recipe</button>
+                        <?php else: ?>
+                            <button type="submit" name="add_favourite">Save Recipe</button>
+                        <?php endif; ?>
 
-            <li>
+                    </form>
 
-                <?php
+                </div>
+            </div>
 
-                // Prepare ingredient display with optional quantity and unit
-                $quantity = $row['quantity'] !== null ? $row['quantity'] : '';
-                $unit = $row['unit'] ?? '';
-                $note = $row['note'] ?? '';
+        </div>
 
-                echo htmlspecialchars(trim("$quantity $unit")) . " - " . htmlspecialchars($row['ingredient_name']);
+    </section>
 
-                // Display optional ingredient note
-                if ($note) {
-                    echo " (" . htmlspecialchars($note) . ")";
-                }
+    <section class="recipe-details">
 
-                ?>
+        <div class="recipe-details-column">
+            <h3>Ingredients</h3>
 
-            </li>
+            <ul class="recipe-ingredients-list">
 
-        <?php endwhile; ?>
+                <?php while ($row = $ingredients->fetch_assoc()): ?>
 
-    </ul>
+                    <li>
 
+                        <?php
 
-    <!-- ===================== -->
-    <!-- Cooking steps section -->
-    <!-- ===================== -->
+                        // Prepare ingredient display with optional quantity and unit
+                        // Strip trailing decimal zeros so e.g. 1.00 displays as 1 and 1.50 as 1.5
+                        $quantity = $row['quantity'] !== null ? rtrim(rtrim((string)$row['quantity'], '0'), '.') : '';
+                        $unit = $row['unit'] ?? '';
+                        $note = $row['note'] ?? '';
 
-    <h3>Steps</h3>
+                        // Only prepend the quantity/unit prefix when at least one value is present;
+                        // if both are absent (NULL in the database) show the ingredient name alone
+                        $prefix = trim("$quantity $unit");
+                        echo $prefix !== '' ? htmlspecialchars($prefix) . ' - ' . htmlspecialchars($row['ingredient_name']) : htmlspecialchars($row['ingredient_name']);
 
-    <ol>
+                        // Display optional ingredient note
+                        if ($note) {
+                            echo " (" . htmlspecialchars($note) . ")";
+                        }
 
-        <?php while ($row = $steps->fetch_assoc()): ?>
+                        ?>
 
-            <li>
+                    </li>
 
-                <p><?php echo htmlspecialchars($row['instruction']); ?></p>
+                <?php endwhile; ?>
 
-                <?php if ($row['step_time_min']): ?>
-                    <p><em>Time: <?php echo $row['step_time_min']; ?> minutes</em></p>
-                <?php endif; ?>
+            </ul>
+        </div>
 
-            </li>
+        <div class="recipe-details-column">
+            <h3>Steps</h3>
 
-        <?php endwhile; ?>
+            <ol class="recipe-steps-list">
 
-    </ol>
+                <?php while ($row = $steps->fetch_assoc()): ?>
+
+                    <li>
+
+                        <p><?php echo htmlspecialchars($row['instruction']); ?></p>
+
+                        <?php if ($row['step_time_min']): ?>
+                            <!-- ⏱ icon replaces the plain-text "Time:" label for a cleaner look -->
+                            <p><em>⏱ <?php echo $row['step_time_min']; ?> minutes</em></p>
+                        <?php endif; ?>
+
+                    </li>
+
+                <?php endwhile; ?>
+
+            </ol>
+        </div>
+
+    </section>
 
 </main>
 
