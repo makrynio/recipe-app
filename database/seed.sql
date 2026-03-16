@@ -29,7 +29,7 @@ INSERT INTO recipes (
     2, 2, 5, 'Vegan American Pancakes', 'vegan-american-pancakes',
     'Fluffy vegan pancakes served with fruit and maple syrup.',
     4, 5, 10, 'easy',
-    NULL,
+    'https://images.unsplash.com/photo-1528207776546-365bb710ee93',
     'https://www.bbc.co.uk/food/recipes/vegan_american_pancakes_76094',
     1
   ),
@@ -55,6 +55,14 @@ INSERT INTO recipes (
     12, 20, 0, 'easy',
     'https://ichef.bbci.co.uk/food/ic/food_16x9_448/recipes/pressed_dried_fruit__and_06954_16x9.jpg',
     'https://www.bbc.co.uk/food/recipes/dried_fruits_and_nuts_18053',
+    1
+  ),
+  (
+    6, 3, 1, 'Banana Oat Breakfast Bowl', 'banana-oat-breakfast-bowl',
+    'Warm oat bowl with banana, honey and berries for a quick breakfast.',
+    2, 5, 10, 'easy',
+    'https://images.unsplash.com/photo-1517673400267-0251440c45dc',
+    NULL,
     1
   );
 
@@ -131,7 +139,15 @@ INSERT INTO recipe_ingredients (
   (5, 'Sultanas', 250, 'g', NULL, 3),
   (5, 'Almonds', 250, 'g', NULL, 4),
   (5, 'Desiccated coconut', 100, 'g', NULL, 5),
-  (5, 'Almond extract', 1, 'tsp', NULL, 6);
+  (5, 'Almond extract', 1, 'tsp', NULL, 6),
+
+  (6, 'Rolled oats', 120, 'g', NULL, 1),
+  (6, 'Milk', 400, 'ml', 'or plant-based milk', 2),
+  (6, 'Banana', 1, 'pcs', 'sliced', 3),
+  (6, 'Honey', 1, 'tbsp', 'optional', 4),
+  (6, 'Cinnamon', 0.50, 'tsp', NULL, 5),
+  (6, 'Mixed berries', 80, 'g', 'fresh or frozen', 6),
+  (6, 'Chopped nuts', 20, 'g', 'for topping', 7);
 
 INSERT INTO recipe_steps (
   recipe_id, step_number, instruction, step_time_min
@@ -172,7 +188,12 @@ INSERT INTO recipe_steps (
   (5, 2, 'Add almonds, coconut and almond extract and process until combined.', 3),
   (5, 3, 'Line a 20cm square tray with baking paper.', 2),
   (5, 4, 'Press mixture firmly into the tray, then cover and chill for at least 1 hour.', 60),
-  (5, 5, 'Lift from tray and cut into bars.', 2);
+  (5, 5, 'Lift from tray and cut into bars.', 2),
+
+  (6, 1, 'Add oats, milk and cinnamon to a saucepan and bring to a gentle simmer.', 2),
+  (6, 2, 'Cook for 6-8 minutes, stirring often, until creamy.', 8),
+  (6, 3, 'Stir in half of the banana slices and a little honey.', 1),
+  (6, 4, 'Divide into bowls and top with berries, remaining banana and chopped nuts.', 1);
 
 
 INSERT INTO favourites (user_id, recipe_id) VALUES
@@ -181,4 +202,5 @@ INSERT INTO favourites (user_id, recipe_id) VALUES
   (2, 2),
   (2, 5),
   (3, 3),
-  (3, 4);
+  (3, 4),
+  (2, 6);
