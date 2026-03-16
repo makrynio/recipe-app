@@ -26,7 +26,7 @@ $isEmbeddedInSearch = isset($embedInSearch) && $embedInSearch === true;
 // The null coalescing operator ensures that empty values are used
 // if parameters are not present in the GET request
 
-$name = $_GET['name'] ?? '';
+$name = $_GET['recipe_name'] ?? '';
 $category = $_GET['category'] ?? '';
 $ingredient = $_GET['ingredient'] ?? '';
 $difficulty = $_GET['difficulty'] ?? '';
@@ -109,9 +109,9 @@ $sql .= " GROUP BY recipes.id";
 // Sorting options
 // ----------------------
 
-if ($sort === "name" && $order === "asc") {
+if ($sort === "recipe_name" && $order === "asc") {
     $sql .= " ORDER BY recipes.title ASC";
-} elseif ($sort === "name" && $order === "desc") {
+} elseif ($sort === "recipe_name" && $order === "desc") {
     $sql .= " ORDER BY recipes.title DESC";
 } elseif ($sort === "time" && $order === "asc") {
     $sql .= " ORDER BY recipes.cook_time_min ASC";

@@ -26,6 +26,14 @@ $categories = $conn->query($sql);
 
 $showInlineResults = isset($_GET['inline_results']);
 
+$recipe_name = $_GET['recipe_name'] ?? '';
+$ingredient = $_GET['ingredient'] ?? '';
+$category = $_GET['category'] ?? '';
+$difficulty = $_GET['difficulty'] ?? '';
+$max_time = $_GET['max_time'] ?? '';
+$sort = $_GET['sort'] ?? '';
+$order = $_GET['order'] ?? 'desc';
+
 // Include the website header (navigation bar and layout)
 require_once __DIR__ . '/../includes/header.php';
 
@@ -60,11 +68,13 @@ fulfills the coursework requirements.
 
                         <?php while ($row = $categories->fetch_assoc()): ?>
 
-                            <option value="<?php echo $row['id']; ?>">
+                            <option value="<?php echo $row['id']; ?>" <?php if ($category == $row['id'])
+                                   echo 'selected'; ?>>
                                 <?php echo htmlspecialchars($row['name']); ?>
                             </option>
 
                         <?php endwhile; ?>
+
                     </select>
                 </div>
 
@@ -74,10 +84,16 @@ fulfills the coursework requirements.
                 <div class="search-field">
                     <label for="search-difficulty">Difficulty</label>
                     <select id="search-difficulty" name="difficulty">
+
                         <option value="">Any difficulty</option>
-                        <option value="easy">Easy</option>
-                        <option value="medium">Medium</option>
-                        <option value="hard">Hard</option>
+
+                        <option value="easy" <?php if ($difficulty == 'easy')
+                            echo 'selected'; ?>>Easy</option>
+                        <option value="medium" <?php if ($difficulty == 'medium')
+                            echo 'selected'; ?>>Medium</option>
+                        <option value="hard" <?php if ($difficulty == 'hard')
+                            echo 'selected'; ?>>Hard</option>
+
                     </select>
                 </div>
 
@@ -88,23 +104,26 @@ fulfills the coursework requirements.
                     <label for="search-sort">Sort results</label>
                     <div class="sort-controls">
                         <select id="search-sort" name="sort">
+
                             <option value="">Default</option>
 
                             <!-- Sort by highest average rating -->
-                            <option value="rating">Rating</option>
-
+                            <option value="rating" <?php if ($sort == 'rating')
+                                echo 'selected'; ?>>Rating</option>
                             <!-- Sort by shortest cooking time -->
-                            <option value="time">Cooking time</option>
-
+                            <option value="time" <?php if ($sort == 'time')
+                                echo 'selected'; ?>>Cooking time</option>
                             <!-- Sort alphabetically -->
-                            <option value="name">Alphabetical</option>
-
+                            <option value="recipe_name" <?php if ($sort == 'recipe_name')
+                                echo 'selected'; ?>>Alphabetical</option>
                             <!-- Sort by newest recipes -->
-                            <option value="newest">Newest</option>
+                            <option value="newest" <?php if ($sort == 'newest')
+                                echo 'selected'; ?>>Newest</option>
                         </select>
                         <button type="button" id="sort-direction" class="sort-btn">↓</button>
 
-                        <input type="hidden" name="order" id="sort-order" value="desc">
+                        <input type="hidden" name="order" id="sort-order"
+                            value="<?php echo htmlspecialchars($order); ?>">
                     </div>
                 </div>
 
@@ -117,8 +136,8 @@ fulfills the coursework requirements.
                 <!-- ===================== -->
                 <div class="search-field">
                     <label for="search-name">Recipe name</label>
-                    <input id="search-name" type="text" name="name" placeholder="e.g. pizza"
-                        list="recipe-name-suggestions" autocomplete="off">
+                    <input id="search-name" type="text" name="recipe_name" value="<?php echo htmlspecialchars($recipe_name); ?>"
+                        placeholder="e.g. pizza" list="recipe-name-suggestions" autocomplete="off">
                     <datalist id="recipe-name-suggestions"></datalist>
                 </div>
 
@@ -127,7 +146,8 @@ fulfills the coursework requirements.
                 <!-- ===================== -->
                 <div class="search-field">
                     <label for="search-ingredient">Ingredient</label>
-                    <input id="search-ingredient" type="text" name="ingredient" placeholder="e.g. tomato"
+                    <input id="search-ingredient" type="text" name="ingredient"
+                        value="<?php echo htmlspecialchars($ingredient); ?>" placeholder="e.g. tomato"
                         list="ingredient-suggestions" autocomplete="off">
                     <datalist id="ingredient-suggestions"></datalist>
                 </div>
@@ -137,7 +157,8 @@ fulfills the coursework requirements.
                 <!-- ===================== -->
                 <div class="search-field">
                     <label for="search-max-time">Max cooking time (minutes)</label>
-                    <input id="search-max-time" type="number" name="max_time" placeholder="e.g. 30">
+                    <input id="search-max-time" type="number" name="max_time"
+                        value="<?php echo htmlspecialchars($max_time); ?>" placeholder="e.g. 30">
                 </div>
 
             </div>
