@@ -442,31 +442,26 @@ wireSearchSuggestions('search-ingredient', 'ingredient-suggestions', '/recipe-ap
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    // Get references to the sort direction button and hidden input field
+    // Get references to button and hidden input
     const button = document.getElementById("sort-direction");
     const orderInput = document.getElementById("sort-order");
 
-    // If the page loads with ASC order already selected,
-    // update the button arrow to reflect the current state
+    // Set the correct arrow when the page loads
     if (orderInput.value === "asc") {
         button.textContent = "↑";
+    } else {
+        button.textContent = "↓";
     }
 
-    // Add click event listener to toggle sorting direction
+    // Toggle sorting direction when the button is clicked
     button.addEventListener("click", function () {
 
-        // If current order is descending, switch to ascending
         if (orderInput.value === "desc") {
-
-            orderInput.value = "asc";   // Update hidden input value
-            button.textContent = "↑";   // Update button icon
-
+            orderInput.value = "asc";
+            button.textContent = "↑";
         } else {
-
-            // Otherwise switch back to descending
             orderInput.value = "desc";
             button.textContent = "↓";
-
         }
 
     });
