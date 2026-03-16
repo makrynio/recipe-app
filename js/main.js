@@ -439,3 +439,36 @@ function wireSearchSuggestions(inputId, datalistId, endpointPath) {
 // Initialize autocomplete for recipe titles and ingredients.
 wireSearchSuggestions('search-name', 'recipe-name-suggestions', '/recipe-app/pages/search_suggestions.php');
 wireSearchSuggestions('search-ingredient', 'ingredient-suggestions', '/recipe-app/pages/search_suggestions.php?type=ingredient');
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // Get references to the sort direction button and hidden input field
+    const button = document.getElementById("sort-direction");
+    const orderInput = document.getElementById("sort-order");
+
+    // If the page loads with ASC order already selected,
+    // update the button arrow to reflect the current state
+    if (orderInput.value === "asc") {
+        button.textContent = "↑";
+    }
+
+    // Add click event listener to toggle sorting direction
+    button.addEventListener("click", function () {
+
+        // If current order is descending, switch to ascending
+        if (orderInput.value === "desc") {
+
+            orderInput.value = "asc";   // Update hidden input value
+            button.textContent = "↑";   // Update button icon
+
+        } else {
+
+            // Otherwise switch back to descending
+            orderInput.value = "desc";
+            button.textContent = "↓";
+
+        }
+
+    });
+
+});

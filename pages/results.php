@@ -32,6 +32,7 @@ $ingredient = $_GET['ingredient'] ?? '';
 $difficulty = $_GET['difficulty'] ?? '';
 $max_time = $_GET['max_time'] ?? '';
 $sort = $_GET['sort'] ?? '';
+$order = $_GET['order'] ?? '';
 
 // ----------------------
 // Base SQL query
@@ -108,13 +109,21 @@ $sql .= " GROUP BY recipes.id";
 // Sorting options
 // ----------------------
 
-if ($sort === "name") {
+if ($sort === "name" && $order === "asc") {
     $sql .= " ORDER BY recipes.title ASC";
-} elseif ($sort === "time") {
+} elseif ($sort === "name" && $order === "desc") {
+    $sql .= " ORDER BY recipes.title DESC";
+} elseif ($sort === "time" && $order === "asc") {
     $sql .= " ORDER BY recipes.cook_time_min ASC";
-} elseif ($sort === "rating") {
+} elseif ($sort === "time" && $order === "desc") {
+    $sql .= " ORDER BY recipes.cook_time_min DESC";
+} elseif ($sort === "rating" && $order === "asc") {
+    $sql .= " ORDER BY avg_rating ASC";
+} elseif ($sort === "rating" && $order === "desc") {
     $sql .= " ORDER BY avg_rating DESC";
-} elseif ($sort === "newest") {
+} elseif ($sort === "newest" && $order === "asc") {
+    $sql .= " ORDER BY recipes.created_at ASC";
+} elseif ($sort === "newest" && $order === "desc") {
     $sql .= " ORDER BY recipes.created_at DESC";
 }
 
