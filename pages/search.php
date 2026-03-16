@@ -31,6 +31,7 @@ require_once __DIR__ . '/../includes/header.php';
 
 ?>
 
+
 <main class="container">
 
     <h2>Search Recipes</h2>
@@ -85,21 +86,26 @@ fulfills the coursework requirements.
                 <!-- ===================== -->
                 <div class="search-field">
                     <label for="search-sort">Sort results</label>
-                    <select id="search-sort" name="sort">
-                        <option value="">Default</option>
+                    <div class="sort-controls">
+                        <select id="search-sort" name="sort">
+                            <option value="">Default</option>
 
-                        <!-- Sort by highest average rating -->
-                        <option value="rating">Rating</option>
+                            <!-- Sort by highest average rating -->
+                            <option value="rating">Rating</option>
 
-                        <!-- Sort by shortest cooking time -->
-                        <option value="time">Cooking time</option>
+                            <!-- Sort by shortest cooking time -->
+                            <option value="time">Cooking time</option>
 
-                        <!-- Sort alphabetically -->
-                        <option value="name">Alphabetical</option>
+                            <!-- Sort alphabetically -->
+                            <option value="name">Alphabetical</option>
 
-                        <!-- Sort by newest recipes -->
-                        <option value="newest">Newest</option>
-                    </select>
+                            <!-- Sort by newest recipes -->
+                            <option value="newest">Newest</option>
+                        </select>
+                        <button type="button" id="sort-direction" class="sort-btn">↓</button>
+
+                        <input type="hidden" name="order" id="sort-order" value="desc">
+                    </div>
                 </div>
 
             </div>
@@ -111,7 +117,8 @@ fulfills the coursework requirements.
                 <!-- ===================== -->
                 <div class="search-field">
                     <label for="search-name">Recipe name</label>
-                    <input id="search-name" type="text" name="name" placeholder="e.g. pizza" list="recipe-name-suggestions" autocomplete="off">
+                    <input id="search-name" type="text" name="name" placeholder="e.g. pizza"
+                        list="recipe-name-suggestions" autocomplete="off">
                     <datalist id="recipe-name-suggestions"></datalist>
                 </div>
 
@@ -120,7 +127,8 @@ fulfills the coursework requirements.
                 <!-- ===================== -->
                 <div class="search-field">
                     <label for="search-ingredient">Ingredient</label>
-                    <input id="search-ingredient" type="text" name="ingredient" placeholder="e.g. tomato" list="ingredient-suggestions" autocomplete="off">
+                    <input id="search-ingredient" type="text" name="ingredient" placeholder="e.g. tomato"
+                        list="ingredient-suggestions" autocomplete="off">
                     <datalist id="ingredient-suggestions"></datalist>
                 </div>
 
