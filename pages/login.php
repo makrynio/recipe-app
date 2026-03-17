@@ -70,12 +70,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
     </div> <!-- end of auth-container -->
         
       <aside class="auth-sidebar">
-          <h2>Log in to explore recipes, save favourites and rate dishes.</h2>
+          <div class="why-join-card">
+              <p>Log in to explore recipes, save favourites and rate dishes.</p>
+          </div>
 
            <!-- Accessibility: alt="" marks this image as decorative; screen readers will skip it entirely. -->
            <img src="/recipe-app/images/login-illustration.jpg"
                alt=""
-               class="sidebar-image">
+               class="sidebar-image sidebar-image--fill">
        </aside>
             
           

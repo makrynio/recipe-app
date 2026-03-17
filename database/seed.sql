@@ -20,7 +20,7 @@ INSERT INTO recipes (
   (
     1, 1, 3, 'Spaghetti Bolognese', 'spaghetti-bolognese',
     'Classic spaghetti bolognese with beef mince, vegetables and tomato sauce.',
-    4, 25, 75, 'medium',
+    4, 25, 75, 'Medium',
     'https://ichef.bbci.co.uk/food/ic/food_16x9_448/recipes/spaghettibolognese_67868_16x9.jpg',
     'https://www.bbc.co.uk/food/recipes/spaghettibolognese_67868',
     1
@@ -28,7 +28,7 @@ INSERT INTO recipes (
   (
     2, 2, 5, 'Vegan American Pancakes', 'vegan-american-pancakes',
     'Fluffy vegan pancakes served with fruit and maple syrup.',
-    4, 5, 10, 'easy',
+    4, 5, 10, 'Easy',
     'https://images.unsplash.com/photo-1528207776546-365bb710ee93',
     'https://www.bbc.co.uk/food/recipes/vegan_american_pancakes_76094',
     1
@@ -36,7 +36,7 @@ INSERT INTO recipes (
   (
     3, 1, 2, 'Healthy Pizza', 'healthy-pizza',
     'Home-made healthy pizza with yoghurt base and vegetable topping.',
-    4, 30, 45, 'medium',
+    4, 30, 45, 'Medium',
     'https://ichef.bbci.co.uk/food/ic/food_16x9_448/recipes/healthy_pizza_55143_16x9.jpg',
     'https://www.bbc.co.uk/food/recipes/healthy_pizza_55143',
     1
@@ -44,7 +44,7 @@ INSERT INTO recipes (
   (
     4, 2, 3, 'Easy Lamb Biryani', 'easy-lamb-biryani',
     'Fragrant one-pot lamb biryani with basmati rice, herbs and spices.',
-    4, 25, 75, 'medium',
+    4, 25, 75, 'Medium',
     'https://ichef.bbci.co.uk/food/ic/food_16x9_448/recipes/easy_lamb_biryani_46729_16x9.jpg',
     'https://www.bbc.co.uk/food/recipes/easy_lamb_biryani_46729',
     1
@@ -52,7 +52,7 @@ INSERT INTO recipes (
   (
     5, 1, 4, 'Dried Fruits and Nuts Bars', 'dried-fruits-and-nuts-bars',
     'No-bake dried fruit and nut bars pressed into a tray and sliced.',
-    12, 20, 0, 'easy',
+    12, 20, 0, 'Easy',
     'https://ichef.bbci.co.uk/food/ic/food_16x9_448/recipes/pressed_dried_fruit__and_06954_16x9.jpg',
     'https://www.bbc.co.uk/food/recipes/dried_fruits_and_nuts_18053',
     1
@@ -60,7 +60,7 @@ INSERT INTO recipes (
   (
     6, 3, 1, 'Banana Oat Breakfast Bowl', 'banana-oat-breakfast-bowl',
     'Warm oat bowl with banana, honey and berries for a quick breakfast.',
-    2, 5, 10, 'easy',
+    2, 5, 10, 'Easy',
     'https://images.unsplash.com/photo-1517673400267-0251440c45dc',
     NULL,
     1

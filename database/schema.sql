@@ -46,7 +46,7 @@ CREATE TABLE recipes (
     servings TINYINT UNSIGNED NULL,
     prep_time_min SMALLINT UNSIGNED NULL,
     cook_time_min SMALLINT UNSIGNED NULL,
-    difficulty ENUM('easy', 'medium', 'hard') NOT NULL DEFAULT 'easy',
+    difficulty ENUM('Easy', 'Medium', 'Hard') NOT NULL DEFAULT 'Easy',
     image_url VARCHAR(255) NULL,
     source_url VARCHAR(255) NULL,
     is_published TINYINT(1) NOT NULL DEFAULT 1,

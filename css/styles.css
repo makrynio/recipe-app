@@ -231,12 +231,32 @@ form {
     flex: 1;
 }
 
-/* Account info section - Flex layout for profile text and picture */
+/* Account info section - Flex layout for profile text and picture; wraps so the edit form can span full width below */
 .account-info {
     display: flex;
+    flex-wrap: wrap;
     align-items: flex-start;
     justify-content: space-between;
     gap: var(--gap-md);
+}
+
+/* Profile text column - grows to fill available space beside the avatar */
+.profile-text {
+    flex: 1;
+}
+
+/* Profile data card - frames only the Name/Email/Member-since facts */
+.profile-data-card {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Remove trailing margin from the last paragraph inside the data card */
+.profile-data-card p:last-child {
+    margin-bottom: 0;
 }
 
 /* Profile picture appearance - Sets a fixed circular avatar and prevents shrinking in flex layouts. */
@@ -335,13 +355,11 @@ form {
     margin: 0;
 }
 
-/* Recipe image column - column 1, row 2; sticky so it remains visible while scrolling the right column */
+/* Recipe image column - column 1, row 2; stretches to match the height of the opposite summary column */
 .recipe-media {
     grid-column: 1;
     grid-row: 2;
-    position: sticky;
-    top: 1rem;
-    align-self: start;
+    align-self: stretch;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-sm);
@@ -363,7 +381,7 @@ form {
     margin-top: auto;
     display: flex;
     flex-direction: row;
-    align-items: flex-end;
+    align-items: stretch;
     gap: var(--gap-sm);
 }
 
@@ -391,10 +409,13 @@ form {
     padding: 0 1px;
 }
 
-/* Recipe cover image - fills the full width of the left column proportionally */
+/* Recipe cover image - grows to fill the media frame while preserving aspect ratio */
 .recipe-cover {
     width: 100%;
-    height: auto;
+    flex: 1 1 0;
+    min-height: 0;
+    object-fit: cover;
+    object-position: center;
     border-radius: var(--border-radius);
     display: block;
 }
@@ -458,20 +479,26 @@ form {
     color: var(--color-rating-star);
 }
 
-/* Recipe action form spacing reset - Removes default form margin inside the action container. */
-.recipe-actions form {
-    margin-bottom: 0;
-}
-
-/* Save/Unsave button wrapper - fixed width so it does not grow alongside the rating form */
+/* Save/Unsave button wrapper - fixed width, stretches to match the rating form height */
 .recipe-actions {
     flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Action button sizing - Prevents action button from stretching full width inside flex row. */
+/* Recipe action form spacing reset and full height stretch */
+.recipe-actions form {
+    margin-bottom: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Action button fills the full height of the form so it matches the rating widget */
 .recipe-actions button {
     width: auto;
     margin-bottom: 0;
+    flex: 1;
 }
 
 /* Save button custom variant - Highlights positive action with a green theme. */
@@ -492,6 +519,20 @@ form {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--gap-md);
+}
+
+/* Recipe meta card - frames the summary facts (category, author, times, source) the same as detail columns */
+.recipe-meta-card {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Remove the bottom margin from the last child inside the card so padding is consistent */
+.recipe-meta-card > :last-child {
+    margin-bottom: 0;
 }
 
 /* Details card container - Provides card styling for each details column. */
@@ -546,11 +587,12 @@ form {
     display: none;
 }
 
-/* Profile edit form container - Visually separates inline edit controls from profile summary text. */
+/* Profile edit form - spans the full width of the account-info section as its own row */
 #edit-profile-form {
-    margin-top: 1rem;
-    border-top: 1px solid var(--color-surface-muted);
-    padding-top: 1rem;
+    flex: 0 0 100%;
+    margin: 0;
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--spacing-sm);
 }
 
 /* Profile edit label layout - Stacks labels above controls for clearer form readability. */
@@ -702,9 +744,15 @@ button {
         grid-row: auto;
     }
 
-    /* Mobile media behavior - Disables sticky positioning so image scrolls naturally on small devices. */
+    /* Mobile media behavior - natural height on small screens; stretch only applies in the two-column layout. */
     .recipe-media {
-        position: static;
+        align-self: auto;
+    }
+
+    /* Mobile image height - auto on small screens so the image keeps its natural proportions. */
+    .recipe-cover {
+        flex: none;
+        height: auto;
     }
 
     /* Mobile image width - Ensures recipe cover spans full available container width. */
@@ -888,6 +936,7 @@ button {
     width: 100%;
     height: 450px;
     object-fit: cover;
+    border-radius: var(--border-radius);
 }
 
 /* Hero text margins - Adjust spacing for hero headings and paragraphs */
@@ -1035,7 +1084,7 @@ button {
 .login-layout {
     display: flex;
     gap: 40px;
-    align-items: flex-end;
+    align-items: stretch;
     flex-wrap: wrap;
 }
 
@@ -1054,6 +1103,22 @@ button {
 /* Auth sidebar width behavior - Allocates the secondary column for helper text/imagery. */
 .auth-sidebar {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Why-join card - Fills the height above the sidebar image to match the form column height. */
+.why-join-card {
+    flex: 1;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+.why-join-card > :last-child {
+    margin-bottom: 0;
 }
 
 /* Auth zoom/mobile stacking - Forces vertical stacking when width is reduced (including browser zoom). */
@@ -1084,5 +1149,18 @@ button {
 .sidebar-image {
     width: 100%;
     border-radius: 8px;
+}
+
+/* Fill variant - Stretches the image to consume remaining sidebar height (login page). */
+.sidebar-image--fill {
+    flex: 1;
+    min-height: 0;
+    object-fit: cover;
+    display: block;
+}
+
+/* When the fill image is present, let the text card shrink to its content height. */
+.auth-sidebar:has(.sidebar-image--fill) .why-join-card {
+    flex: none;
 }
 

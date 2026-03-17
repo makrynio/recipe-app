@@ -193,22 +193,24 @@ require_once __DIR__ . '/../includes/header.php';
 
         <div class="recipe-summary">
 
-            <div class="recipe-meta">
-                <p><strong>Category:</strong> <?php echo htmlspecialchars($recipe['category_name'] ?? 'Uncategorised'); ?></p>
-                <p><strong>Author:</strong> <?php echo htmlspecialchars($recipe['author_name']); ?></p>
-                <p><strong>Difficulty:</strong> <?php echo htmlspecialchars($recipe['difficulty']); ?></p>
-                <p><strong>Servings:</strong> <?php echo $recipe['servings'] ?? 'N/A'; ?></p>
-                <p><strong>Preparation time:</strong> <?php echo $recipe['prep_time_min'] ?? 'N/A'; ?> minutes</p>
-                <p><strong>Cooking time:</strong> <?php echo $recipe['cook_time_min'] ?? 'N/A'; ?> minutes</p>
+            <div class="recipe-meta-card">
+                <div class="recipe-meta">
+                    <p><strong>Category:</strong> <?php echo htmlspecialchars($recipe['category_name'] ?? 'Uncategorised'); ?></p>
+                    <p><strong>Author:</strong> <?php echo htmlspecialchars($recipe['author_name']); ?></p>
+                    <p><strong>Difficulty:</strong> <?php echo htmlspecialchars($recipe['difficulty']); ?></p>
+                    <p><strong>Servings:</strong> <?php echo $recipe['servings'] ?? 'N/A'; ?></p>
+                    <p><strong>Preparation time:</strong> <?php echo $recipe['prep_time_min'] ?? 'N/A'; ?> minutes</p>
+                    <p><strong>Cooking time:</strong> <?php echo $recipe['cook_time_min'] ?? 'N/A'; ?> minutes</p>
+                </div>
+                <?php if (!empty($recipe['source_url'])): ?>
+                    <p class="recipe-source">
+                        <strong>Source:</strong>
+                        <a href="<?php echo htmlspecialchars($recipe['source_url']); ?>" target="_blank" rel="noopener noreferrer">
+                            View original recipe
+                        </a>
+                    </p>
+                <?php endif; ?>
             </div>
-             <?php if (!empty($recipe['source_url'])): ?>
-                <p class="recipe-source">
-                    <strong>Source:</strong>
-                    <a href="<?php echo htmlspecialchars($recipe['source_url']); ?>" target="_blank" rel="noopener noreferrer">
-                        View original recipe
-                    </a>
-                </p>
-            <?php endif; ?>
 
             <div class="recipe-form-group">
                 <!-- data-auto-submit="true" tells main.js to submit this form immediately when a star is selected -->

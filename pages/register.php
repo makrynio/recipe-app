@@ -125,14 +125,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
     </form>
     </div> <!-- end of auth-container -->
     <aside class="auth-sidebar"> <!-- sidebar with additional information -->
-       <h2>Why join The Recipe Library?</h2>
+        <div class="why-join-card">
+            <h2>Why join The Recipe Library?</h2>
 
-        <ul>
-            <li>Search recipes easily</li>
-            <li>Save your favourite dishes</li>
-            <li>Rate recipes you try</li>
-            <li>Share feedback with the community</li>
-        </ul>
+            <ul>
+                <li>Search recipes easily</li>
+                <li>Save your favourite dishes</li>
+                <li>Rate recipes you try</li>
+                <li>Share feedback with the community</li>
+            </ul>
+        </div>
 
         <img src="/recipe-app/images/register-illustration.jpg"
              alt="fresh ingredients"

@@ -55,28 +55,30 @@ $favourites = getUserFavourites($conn, $userId);
         <section class="account-info"> <!-- section displaying the user's profile details -->
             <div class="profile-text">
                 <h2>Profile</h2>
-                <p><strong>Name:</strong> <?php echo htmlspecialchars($name); // escape output to prevent XSS ?></p>
-                <p><strong>Email:</strong> <?php echo htmlspecialchars($email); // escape output to prevent XSS ?></p>
-                <p><strong>Member since:</strong> <?php echo date('d F Y', strtotime($createdAt)); // format the stored timestamp as a readable date ?></p>
+                <div class="profile-data-card">
+                    <p><strong>Name:</strong> <?php echo htmlspecialchars($name); // escape output to prevent XSS ?></p>
+                    <p><strong>Email:</strong> <?php echo htmlspecialchars($email); // escape output to prevent XSS ?></p>
+                    <p><strong>Member since:</strong> <?php echo date('d F Y', strtotime($createdAt)); // format the stored timestamp as a readable date ?></p>
+                </div>
 
                 <button id="edit-profile-btn" type="button" class="button-secondary">Edit My Profile</button>
-
-                <form id="edit-profile-form" method="post" class="hidden">
-                    <input type="hidden" name="edit_profile" value="1">
-                    <label>
-                        Name
-                        <input type="text" name="full_name" value="<?php echo htmlspecialchars($name); ?>" required>
-                    </label>
-                    <label>
-                        Email
-                        <input type="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
-                    </label>
-                    <button type="submit" class="button-secondary">Save Profile</button>
-                    <button id="cancel-edit-btn" type="button" class="button-secondary">Cancel</button>
-                </form>
             </div>
             <!-- Accessibility: empty alt marks this image as decorative so screen readers focus on profile text instead. -->
             <img src="/recipe-app/images/profile-picture-placeholder.jpg" alt="" class="profile-picture">
+
+            <form id="edit-profile-form" method="post" class="hidden">
+                <input type="hidden" name="edit_profile" value="1">
+                <label>
+                    Name
+                    <input type="text" name="full_name" value="<?php echo htmlspecialchars($name); ?>" required>
+                </label>
+                <label>
+                    Email
+                    <input type="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
+                </label>
+                <button type="submit" class="button-secondary">Save Profile</button>
+                <button id="cancel-edit-btn" type="button" class="button-secondary">Cancel</button>
+            </form>
         </section>
 
         <section class="account-favourites"> <!-- section that will list the user's saved recipes -->
