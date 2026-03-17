@@ -39,12 +39,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
     }
 }
 ?>
+<?php // Accessibility: dynamic page title gives clear page context in browser tabs, history, and assistive tech. ?>
+<?php $pageTitle = 'Log In'; ?>
 <?php require_once __DIR__ . '/../includes/header.php'; // include site header - using __DIR__ for absolute path reliability ?>
-    <main class="container"> <!-- main content area for the login form -->
+    <!-- Accessibility: id="main-content" + tabindex="-1" enables the skip link to focus this area for keyboard users. -->
+    <main id="main-content" class="container" tabindex="-1"> <!-- main content area for the login form -->
         <h1>Log In</h1> <!-- page heading -->
 
         <?php if (!empty($errors)): ?> <!-- only render the error list if there are errors -->
-            <ul class="error-list"> <!-- unordered list to display validation errors -->
+            <!-- Accessibility: role="alert" announces validation errors immediately to screen readers. -->
+            <ul class="error-list" role="alert"> <!-- unordered list to display validation errors -->
                 <?php foreach ($errors as $error): ?> <!-- loop through each error message -->
                     <li><?php echo htmlspecialchars($error); ?></li> <!-- output each error, escaped to prevent XSS -->
                 <?php endforeach; ?>
@@ -68,8 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
       <aside class="auth-sidebar">
           <h2>Log in to explore recipes, save favourites and rate dishes.</h2>
 
+           <!-- Accessibility: alt="" marks this image as decorative; screen readers will skip it entirely. -->
            <img src="/recipe-app/images/login-illustration.jpg"
-               alt="Chef cooking in a kitchen"
+               alt=""
                class="sidebar-image">
        </aside>
             

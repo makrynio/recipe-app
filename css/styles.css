@@ -1,10 +1,36 @@
 ﻿/* CSS Custom Properties (Variables) - Define reusable color, spacing, and other values */
 :root {
     --color-white: #ffffff;
+    --color-black: #000000;
     --color-light-gray: #f5f5f5;
     --color-dark-gray: #222;
     --color-border: #ddd;
-    --color-card-bg: #f4f4f4;
+    --color-card-bg: var(--color-light-gray);
+    --color-focus-ring: #0b5fff;
+    --color-card-hover: #e9e9e9;
+    --color-muted-text: #666;
+    --color-surface-muted: #ececec;
+    --color-border-strong: #bbb;
+    --color-border-muted: var(--color-border-strong);
+    --color-secondary-text: #333;
+    --color-secondary-bg: #e0e0e0;
+    --color-secondary-bg-hover: #d1d1d1;
+    --color-success: #2f6f47;
+    --color-success-hover: #357a51;
+    --color-success-strong: #3f8f5f;
+    --color-success-border-soft: #a7d3b5;
+    --color-success-bg-soft: #f3fbf5;
+    --color-success-text: #1d5f35;
+    --color-danger: #b42318;
+    --color-danger-border-soft: #e2a6a0;
+    --color-danger-bg-soft: #fff3f2;
+    --color-danger-text: #8a1f17;
+    --color-rating-star: #d28c18;
+    --color-rating-star-empty: var(--color-surface-muted);
+    --color-rating-star-active: #4a90d9;
+    --color-sort-active-bg: #eef5ff;
+    --shadow-card-hover: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-card-soft: 0 2px 8px rgba(0, 0, 0, 0.06);
     /* Shared background colour for card-style list items */
     --border-radius: 8px;
     --spacing-xs: 0.75rem;
@@ -14,6 +40,9 @@
     --gap-sm: 0.75rem;
     --gap-md: 1rem;
     --gap-lg: 1.25rem;
+    /* Button padding - Single source of truth for consistent button sizing across all button styles. */
+    --btn-padding-y: 0.75rem;
+    --btn-padding-x: 1.25rem;
 }
 
 /* Global reset and base styles - Ensure consistent box-sizing and basic element styling */
@@ -36,23 +65,64 @@ img {
     height: auto;
 }
 
-/* Link base style - Makes links inherit surrounding text color and removes underline by default. */
+/* Link base style - Keep links visually distinguishable from surrounding text. */
 a {
     color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.12em;
+}
+
+/* Link interaction style - Increase underline emphasis for hover/focus feedback. */
+a:hover,
+a:focus {
+    text-decoration-thickness: 0.12em;
+}
+
+/* Visible keyboard focus indicator across interactive controls. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid var(--color-focus-ring);
+    outline-offset: 2px;
+}
+
+/* Skip link stays hidden until keyboard focus places it in view. */
+.skip-link {
+    position: absolute;
+    left: 0.75rem;
+    top: 0.75rem;
+    transform: translateY(-180%);
+    z-index: 2000;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid var(--color-black);
+    border-radius: 0.35rem;
+    background: var(--color-white);
+    color: var(--color-black);
     text-decoration: none;
 }
 
-/* Link interaction style - Restores underline on hover/focus for better affordance and accessibility. */
-a:hover,
-a:focus {
-    text-decoration: underline;
+.skip-link:focus,
+.skip-link:focus-visible {
+    transform: translateY(0);
 }
+
+/* ==========================================================================
+   Shared Layout And Shells
+   ========================================================================== */
 
 /* Layout containers - Consistent width, centering, and padding for main content areas */
 .container {
     width: min(90%, 1100px);
     margin: 0 auto;
     padding: 20px 0;
+}
+
+/* Main content area - Increase padding for main content */
+main.container {
+    padding: var(--spacing-lg) 0;
 }
 
 /* Card-style elements - Apply white background and border-radius to headers, footers, sections, and forms */
@@ -82,6 +152,72 @@ form {
     padding: var(--spacing-sm);
     margin-bottom: var(--spacing-md);
 }
+
+/* ==========================================================================
+   Header And Navigation
+   ========================================================================== */
+
+/* Header layout - Stack title and nav vertically on mobile */
+.site-header .container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-md);
+    padding: var(--spacing-sm) 0;
+}
+
+/* Site title typography - Defines heading size and removes default margin offset. */
+.site-title {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+/* Keep navigation landmark and greeting grouped and aligned as one header block. */
+.header-nav-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+}
+
+/* Navigation list layout - Uses flexible stacked links by default for narrow screens. */
+.nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-sm);
+    margin: 0;
+    padding: 0;
+}
+
+/* Brand and navigation links are styled like navigation items rather than inline links. */
+.site-title a,
+.nav-list a {
+    text-decoration: none;
+}
+
+/* Header nav emphasis - Makes primary navigation labels bold for stronger scanability. */
+.nav-list a {
+    font-weight: 700;
+}
+
+.site-title a:hover,
+.site-title a:focus,
+.nav-list a:hover,
+.nav-list a:focus {
+    text-decoration: underline;
+}
+
+/* Greeting message - Italic styling for user greetings */
+.greeting {
+    margin: 0;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--color-muted-text);
+}
+
+/* ==========================================================================
+   Account And Shared Lists
+   ========================================================================== */
 
 /* Account sections wrapper - Display main account sections side by side */
 .account-sections {
@@ -152,9 +288,9 @@ form {
 /* Shared card hover treatment - Adds subtle visual feedback for interactive list cards. */
 .account-favourites li a:hover,
 .recipe-list li a:hover {
-    background-color: #e9e9e9;
+    background-color: var(--color-card-hover);
     text-decoration: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-card-hover);
 }
 
 /* Search results list - vertical stack layout */
@@ -194,6 +330,7 @@ form {
 }
 
 /* Recipe title spacing reset - Removes default heading top spacing for tighter hero alignment. */
+.recipe-intro h1,
 .recipe-intro h2 {
     margin: 0;
 }
@@ -267,9 +404,9 @@ form {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #666;
-    background-color: #ececec;
-    border: 1px dashed #bdbdbd;
+    color: var(--color-muted-text);
+    background-color: var(--color-surface-muted);
+    border: 1px dashed var(--color-border-muted);
     min-height: 320px;
     width: 100%;
     align-self: center;
@@ -318,7 +455,7 @@ form {
     font-size: 1.5rem;
     line-height: 1;
     letter-spacing: 0.05em;
-    color: #d28c18;
+    color: var(--color-rating-star);
 }
 
 /* Recipe action form spacing reset - Removes default form margin inside the action container. */
@@ -339,15 +476,15 @@ form {
 
 /* Save button custom variant - Highlights positive action with a green theme. */
 .recipe-actions button[name="add_favourite"] {
-    background-color: #3f8f5f;
-    color: white;
-    border: 1px solid #357a51;
+    background-color: var(--color-success);
+    color: var(--color-white);
+    border: 1px solid var(--color-success);
 }
 
 /* Save button interaction state - Darkens background for hover/focus accessibility feedback. */
 .recipe-actions button[name="add_favourite"]:hover,
 .recipe-actions button[name="add_favourite"]:focus {
-    background-color: #357a51;
+    background-color: var(--color-success);
 }
 
 /* Details section grid - Splits ingredients and steps into two equal columns on larger screens. */
@@ -365,8 +502,8 @@ form {
     padding: var(--spacing-sm);
 }
 
-/* Details heading spacing reset - Removes default top margin in detail cards. */
-.recipe-details-column h3 {
+/* Details heading spacing reset - Targets h2 after heading hierarchy fix (h1 -> h2). */
+.recipe-details-column h2 {
     margin-top: 0;
 }
 
@@ -412,7 +549,7 @@ form {
 /* Profile edit form container - Visually separates inline edit controls from profile summary text. */
 #edit-profile-form {
     margin-top: 1rem;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid var(--color-surface-muted);
     padding-top: 1rem;
 }
 
@@ -426,7 +563,7 @@ form {
 /* Profile edit input style - Uses compact padding and subtle border for inline profile fields. */
 #edit-profile-form input {
     padding: 0.5rem;
-    border: 1px solid #bbb;
+    border: 1px solid var(--color-border-strong);
     border-radius: 4px;
 }
 
@@ -435,34 +572,9 @@ form {
     margin-right: 0.5rem;
 }
 
-/* Header layout - Stack title and nav vertically on mobile */
-.site-header .container {
-    display: flex;
-    flex-direction: column;
-    gap: var(--gap-md);
-    padding: var(--spacing-sm) 0;
-}
-
-/* Site title typography - Defines heading size and removes default margin offset. */
-.site-title {
-    margin: 0;
-    font-size: 1.5rem;
-}
-
-/* Navigation list layout - Uses flexible stacked links by default for narrow screens. */
-.nav-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: var(--gap-sm);
-    margin: 0;
-    padding: 0;
-}
-
-/* Main content area - Increase padding for main content */
-main.container {
-    padding: var(--spacing-lg) 0;
-}
+/* ==========================================================================
+   Shared Controls And Utilities
+   ========================================================================== */
 
 /* Form elements - Global styling for inputs, selects, textareas, and buttons */
 input,
@@ -470,10 +582,19 @@ select,
 textarea,
 button {
     width: 100%;
-    padding: var(--spacing-xs);
+    padding: var(--btn-padding-y) var(--btn-padding-x);
     margin-bottom: var(--spacing-sm);
     font: inherit;
 }
+
+/* Global button cursor - Indicates interactive intent for all button elements. */
+button {
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   Search And Sort
+   ========================================================================== */
 
 /* Search form layout - two columns with three sections each on desktop */
 .search-form-columns {
@@ -514,6 +635,55 @@ button {
 .search-field select {
     height: 44px;
 }
+
+/* Container holding the sorting dropdown and direction button */
+.sort-controls {
+    display: flex;
+    align-items: stretch;
+}
+
+/* Dropdown used to select sorting type */
+#search-sort {
+    flex: 1;
+    height: 38px;
+    padding: 0 10px;
+    border-radius: 6px 0 0 6px;
+}
+
+/* Button used to toggle sorting direction (ASC/DESC) */
+.sort-btn {
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--color-surface-muted);
+    border-radius: 0 6px 6px 0;
+    background: var(--color-white);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+}
+
+/* Hover effects */
+#search-sort:hover,
+.sort-btn:hover {
+    border-color: var(--color-muted-text);
+}
+
+/* Focus state */
+#search-sort:focus {
+    border-color: var(--color-black);
+}
+
+.sort-btn[aria-pressed="true"] {
+    background-color: var(--color-sort-active-bg);
+}
+
+/* ==========================================================================
+   Responsive Overrides
+   ========================================================================== */
 
 /* Responsive behavior for account sections */
 @media (max-width: 900px) {
@@ -615,16 +785,16 @@ button {
     }
 }
 
-/* Global button cursor - Indicates interactive intent for all button elements. */
-button {
-    cursor: pointer;
-}
+/* ==========================================================================
+    Star Rating Component
+    ========================================================================== */
 
 /* Star rating widget */
 .star-rating {
     border: none;
     padding: 0;
     margin-bottom: var(--spacing-sm);
+    position: relative;
 }
 
 /* Star rating legend emphasis - Makes legend text stand out from surrounding body content. */
@@ -635,24 +805,45 @@ button {
 
 /* Hide radio controls visually - Keeps native inputs accessible while displaying custom star labels. */
 .star-rating input[type="radio"] {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    border: 0;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
 }
 
 /* Star label appearance - Styles stars as interactive icon controls for rating selection. */
 .star-rating label {
     font-size: 2.4rem;
-    color: #ccc;
+    color: var(--color-rating-star-empty);
     cursor: pointer;
     transition: color 0.15s;
     width: auto;
     margin: 0;
     padding: 0 2px;
+    display: inline-block;
+}
+
+/* Keep keyboard focus visible on the corresponding star when a radio input receives focus. */
+.star-rating input[type="radio"]:focus-visible + label {
+    outline: 3px solid var(--color-focus-ring);
+    outline-offset: 2px;
+    border-radius: 4px;
 }
 
 /* Active star state - Applies highlighted colour to selected/hovered star labels. */
 .star-rating label.active {
-    color: #4a90d9;
+    color: var(--color-rating-star-active);
 }
+
+/* ==========================================================================
+    Desktop Header And Auth Overrides
+    ========================================================================== */
 
 /* Desktop responsive styles - Adjust layouts for larger screens */
 @media (min-width: 768px) {
@@ -670,6 +861,11 @@ button {
         gap: var(--gap-lg);
     }
 
+    /* On wider screens, align greeting with the right edge of the navigation row. */
+    .header-nav-group {
+        align-items: flex-end;
+    }
+
     /* Authentication container - Enable flexbox for form layout on desktop */
     .auth-container {
         display: flex;
@@ -683,12 +879,9 @@ button {
     }
 }
 
-/* Greeting message - Italic styling for user greetings */
-.greeting {
-    font-style: italic;
-    font-size: 0.9rem;
-    color: #666;
-}
+/* ==========================================================================
+   Buttons And Home Hero
+   ========================================================================== */
 
 /* Hero section - Full-width image with cover fit */
 .hero-image {
@@ -710,26 +903,31 @@ button {
 /* Call-to-action buttons - Green button styling with hover effect */
 .cta-button {
     display: inline-block;
-    padding: 12px 20px;
-    background-color: #2c7a4b;
-    color: white;
+    padding: var(--btn-padding-y) var(--btn-padding-x);
+    background-color: var(--color-success);
+    color: var(--color-white);
     text-decoration: none;
     border-radius: 6px;
     font-weight: 600;
 }
 
+/* Homepage hero spacing - Adds clear separation between the CTA and the hero image below it. */
+.hero .cta-button {
+    margin-bottom: var(--spacing-sm);
+}
+
 /* CTA hover state - Darkens green button background to signal interactivity. */
 .cta-button:hover {
-    background-color: #24663d;
+    background-color: var(--color-success-hover);
 }
 
 /* Secondary button for account info */
 .button-secondary {
     display: inline-block;
-    padding: 10px 16px;
-    background-color: #e0e0e0;
-    color: #333;
-    border: 1px solid #bbb;
+    padding: var(--btn-padding-y) var(--btn-padding-x);
+    background-color: var(--color-secondary-bg);
+    color: var(--color-secondary-text);
+    border: 1px solid var(--color-border-strong);
     border-radius: 6px;
     text-decoration: none;
     font-weight: 600;
@@ -738,7 +936,7 @@ button {
 
 /* Secondary button hover state - Slightly darkens neutral button on hover for feedback. */
 .button-secondary:hover {
-    background-color: #d1d1d1;
+    background-color: var(--color-secondary-bg-hover);
 }
 
 /* Center button utility class */
@@ -748,48 +946,52 @@ button {
     width: fit-content;
 }
 
+/* ==========================================================================
+    Authentication
+    ========================================================================== */
+
 /* Authentication page container - Styled container for login/register forms */
 .auth-container {
     max-width: 520px;
     padding: 32px;
-    background-color: #fff;
-    border: 1px solid #ddd;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
     border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--shadow-card-soft);
 }
 
 /* Authentication form inputs - Specific styling for inputs in auth forms */
 .auth-container input {
     width: 100%;
     padding: 12px;
-    border: 1px solid #bbb;
+    border: 1px solid var(--color-border-strong);
     border-radius: 6px;
-    background-color: #fff;
+    background-color: var(--color-white);
 }
 
 /* Inline validation feedback for authentication forms */
 .auth-container input.input-invalid {
-    border-color: #b42318;
-    background-color: #fff3f2;
+    border-color: var(--color-danger);
+    background-color: var(--color-danger-bg-soft);
 }
 
 /* Valid fields keep a subtle green border so users can see what already passed validation. */
 .auth-container input.input-valid {
-    border-color: #2c7a4b;
+    border-color: var(--color-success);
 }
 
 /* Hint text is used for proactive guidance such as the password-strength rule. */
 .field-hint {
     margin: -0.5rem 0 var(--spacing-sm);
     font-size: 0.9rem;
-    color: #5f5f5f;
+    color: var(--color-muted-text);
 }
 
 /* Error text appears directly under the related input for immediate correction feedback. */
 .field-error {
     margin: -0.5rem 0 var(--spacing-sm);
     font-size: 0.9rem;
-    color: #b42318;
+    color: var(--color-danger);
 }
 
 /* Hidden error element state - Keeps error placeholders in DOM while not occupying layout space. */
@@ -801,20 +1003,20 @@ button {
 .error-list {
     margin: 0 0 var(--spacing-sm);
     padding: 0.75rem 1rem;
-    border: 1px solid #e2a6a0;
+    border: 1px solid var(--color-danger-border-soft);
     border-radius: 8px;
-    background-color: #fff3f2;
-    color: #8a1f17;
+    background-color: var(--color-danger-bg-soft);
+    color: var(--color-danger-text);
 }
 
 /* Success banner is shown after registration completes on the server side. */
 .success-msg {
     margin: 0 0 var(--spacing-sm);
     padding: 0.75rem 1rem;
-    border: 1px solid #a7d3b5;
+    border: 1px solid var(--color-success-border-soft);
     border-radius: 8px;
-    background-color: #f3fbf5;
-    color: #1d5f35;
+    background-color: var(--color-success-bg-soft);
+    color: var(--color-success-text);
 }
 
 /* Authentication form buttons - Green button styling for auth forms */
@@ -823,8 +1025,8 @@ button {
     padding: 12px;
     border: none;
     border-radius: 6px;
-    background-color: #2c7a4b;
-    color: white;
+    background-color: var(--color-success-strong);
+    color: var(--color-white);
     font-weight: 600;
     cursor: pointer;
 }
@@ -884,77 +1086,3 @@ button {
     border-radius: 8px;
 }
 
-/* ===================== */
-/* Sort control container */
-/* ===================== */
-
-/* Container holding the sorting dropdown and direction button */
-.sort-controls {
-    display: flex;
-    align-items: stretch;
-}
-
-
-/* ===================== */
-/* Sorting dropdown */
-/* ===================== */
-
-/* Dropdown used to select sorting type */
-#search-sort {
-
-    flex: 1; /* take available space */
-
-    height: 38px;
-    padding: 0 10px;
-
-    border-radius: 6px 0 0 6px;
-}
-
-
-/* ===================== */
-/* Sort direction button */
-/* ===================== */
-
-/* Button used to toggle sorting direction (ASC/DESC) */
-.sort-btn {
-
-    width: 38px;
-    height: 38px;
-
-    border: 1px solid #ccc;
-
-    border-radius: 0 6px 6px 0;
-
-    background: #fff;
-
-    font-size: 16px;
-    font-weight: 600;
-
-    cursor: pointer;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    transition: all 0.15s ease;
-}
-
-
-/* ===================== */
-/* Hover effects */
-/* ===================== */
-
-#search-sort:hover,
-.sort-btn:hover {
-    border-color: #666;
-}
-
-
-/* ===================== */
-/* Focus state */
-/* ===================== */
-
-#search-sort:focus {
-    outline: none;
-    border-color: #000;
-}

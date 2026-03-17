@@ -42,9 +42,12 @@ mysqli_stmt_close($stmt); // free the statement resource
 
 $favourites = getUserFavourites($conn, $userId);
 ?>
+<?php // Accessibility: dynamic page title gives clear context in browser tabs, history, and assistive tech. ?>
+<?php $pageTitle = 'My Account'; ?>
 <?php require_once __DIR__ . '/../includes/header.php'; // include site header - using __DIR__ for absolute path reliability ?>
 
-    <main class="account-container container"> <!-- main content area for the account page -->
+    <!-- Accessibility: id="main-content" + tabindex="-1" lets the skip link move keyboard focus directly to primary page content. -->
+    <main id="main-content" class="account-container container" tabindex="-1"> <!-- main content area for the account page -->
         <h1>My Account</h1> <!-- page heading -->
         <p>Manage your profile and revisit your favourite recipes anytime.</p> <!-- brief description of the page's purpose -->
 
@@ -72,7 +75,8 @@ $favourites = getUserFavourites($conn, $userId);
                     <button id="cancel-edit-btn" type="button" class="button-secondary">Cancel</button>
                 </form>
             </div>
-            <img src="/recipe-app/images/profile-picture-placeholder.jpg" alt="Profile Picture" class="profile-picture">
+            <!-- Accessibility: empty alt marks this image as decorative so screen readers focus on profile text instead. -->
+            <img src="/recipe-app/images/profile-picture-placeholder.jpg" alt="" class="profile-picture">
         </section>
 
         <section class="account-favourites"> <!-- section that will list the user's saved recipes -->
@@ -82,7 +86,8 @@ $favourites = getUserFavourites($conn, $userId);
                     <?php while ($row = $favourites->fetch_assoc()): ?>
                         <li>
                             <a href="/recipe-app/pages/recipe.php?id=<?php echo $row['id']; ?>">
-                                <img src="<?php echo htmlspecialchars($row['image_url']); ?>" alt="Recipe thumbnail" class="recipe-thumbnail">
+                                <!-- Accessibility: thumbnail is decorative (title/category already in link text); loading="lazy" improves initial page load. -->
+                                <img src="<?php echo htmlspecialchars($row['image_url']); ?>" alt="" class="recipe-thumbnail" loading="lazy">
                                 <?php echo htmlspecialchars($row['title']); ?> — <?php echo htmlspecialchars($row['category_name']); ?> <small>(<?php echo $row['cook_time_min']; ?> min)</small>
                             </a>
                                 

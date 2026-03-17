@@ -70,14 +70,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
     }
 }
 ?>
+<?php // Accessibility: dynamic page title provides clearer context in browser tabs and assistive tech history. ?>
+<?php $pageTitle = 'Create Account'; ?>
 <?php require_once __DIR__ . '/../includes/header.php'; // include site header - using __DIR__ for absolute path reliability ?>
-<main class="container"> <!-- main content area for the registration form -->
+<!-- Accessibility: id="main-content" + tabindex="-1" allows the skip link to move keyboard focus directly to primary content. -->
+<main id="main-content" class="container" tabindex="-1"> <!-- main content area for the registration form -->
    
     <h1>Create your free account</h1> <!-- page heading -->
     
 
     <?php if (!empty($errors)): ?> <!-- only render the error list if there are errors -->
-        <ul class="error-list"> <!-- unordered list to display validation errors -->
+            <!-- Accessibility: role="alert" announces validation errors immediately to screen readers. -->
+        <ul class="error-list" role="alert"> <!-- unordered list to display validation errors -->
             <?php foreach ($errors as $error): ?> <!-- loop through each error message -->
                 <li><?php echo htmlspecialchars($error); ?></li> <!-- output each error, escaped to prevent XSS -->
             <?php endforeach; ?>
@@ -85,7 +89,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
     <?php endif; ?>
 
     <?php if ($success): ?> <!-- only render the success message if registration completed -->
-        <p class="success-msg"><?php echo $success; ?></p>
+        <!-- Accessibility: role="status" with aria-live="polite" announces success without interrupting current speech. -->
+        <p class="success-msg" role="status" aria-live="polite"><?php echo $success; ?></p>
         <!-- display the success message with login link (HTML is intentional here) -->
     <?php endif; ?>
     
@@ -106,6 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only process the form on a POST 
         <label for="password">Password</label> <!-- label linked to the password input -->
         <input type="password" id="password" name="password" required autocomplete="new-password" aria-describedby="register-password-hint">
         <!-- password field; value is never repopulated for security -->
+        <!-- Accessibility: aria-describedby links this input to helper text so password rules are announced on focus. -->
         <!-- Helper text explains the password rule before the user submits the form -->
         <p class="field-hint" id="register-password-hint">Use at least 8 characters with an uppercase letter, a lowercase letter, and a number.</p>
 

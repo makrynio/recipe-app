@@ -142,15 +142,19 @@ $isFavourite = isFavourite($conn, $userId, $recipe_id);
 $userRating = getUserRating($conn, $userId, $recipe_id);
 
 // Include the website header (navigation and layout)
+// Accessibility: use the recipe title in <title> so tabs/history and assistive tech provide clear page context.
+$pageTitle = $recipe['title'] ?? 'Recipe';
 require_once __DIR__ . '/../includes/header.php';
 
 ?>
 
-<main class="container recipe-page">
+<!-- Accessibility: id="main-content" + tabindex="-1" lets the skip link move keyboard focus directly to main content. -->
+<main id="main-content" class="container recipe-page" tabindex="-1">
 
     <section class="recipe-hero">
         <div class="recipe-intro">
-            <h2><?php echo htmlspecialchars($recipe['title']); ?></h2>
+            <!-- Accessibility: main page heading is an <h1> (single primary heading for this document). -->
+            <h1><?php echo htmlspecialchars($recipe['title']); ?></h1>
 
             <p class="recipe-description"><?php echo htmlspecialchars($recipe['description'] ?? 'Description not specified'); ?></p>
 
@@ -168,6 +172,7 @@ require_once __DIR__ . '/../includes/header.php';
             $starVisual = str_repeat('&#9733;', $filledStars) . str_repeat('&#9734;', $emptyStars);
             ?>
             <p class="recipe-average-rating">
+                <!-- Accessibility: decorative star glyphs are hidden from screen readers to avoid duplicate announcements. -->
                 <span class="rating-stars" aria-hidden="true"><?php echo $starVisual; ?></span>
                 <?php echo $displayRating; ?>
                 (<?php echo $ratingCount; ?> <?php echo $ratingCount === 1 ? 'rating' : 'ratings'; ?>)
@@ -213,12 +218,14 @@ require_once __DIR__ . '/../includes/header.php';
                     <fieldset class="star-rating">
                         <!-- Show "Update your rating" if the user has already rated, otherwise invite them to rate -->
                         <legend><?php echo $userRating ? 'Update your rating' : 'Rate this recipe'; ?></legend>
+                        <!-- Accessibility: each star radio includes an aria-label so screen readers announce the exact rating value (1-5 stars). -->
                         <?php for ($i = 1; $i <= 5; $i++): ?>
                             <input
                                 type="radio"
                                 id="star<?php echo $i; ?>"
                                 name="rating"
                                 value="<?php echo $i; ?>"
+                                aria-label="<?php echo $i; ?> <?php echo $i === 1 ? 'star' : 'stars'; ?>"
                                 <?php echo ($userRating && (int)$userRating['rating'] === $i) ? 'checked' : ''; ?>
                                 required
                             >
@@ -257,7 +264,8 @@ require_once __DIR__ . '/../includes/header.php';
     <section class="recipe-details">
 
         <div class="recipe-details-column">
-            <h3>Ingredients</h3>
+            <!-- Accessibility: use <h2> here (not <h3>) so heading order follows <h1> without skipping levels. -->
+            <h2>Ingredients</h2>
 
             <ul class="recipe-ingredients-list">
 
@@ -293,7 +301,8 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
 
         <div class="recipe-details-column">
-            <h3>Steps</h3>
+            <!-- Accessibility: sibling section heading remains <h2> to keep a consistent page outline. -->
+            <h2>Steps</h2>
 
             <ol class="recipe-steps-list">
 

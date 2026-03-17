@@ -33,17 +33,26 @@ $difficulty = $_GET['difficulty'] ?? '';
 $max_time = $_GET['max_time'] ?? '';
 $sort = $_GET['sort'] ?? '';
 $order = $_GET['order'] ?? 'desc';
+// Track sort direction for aria-pressed state on the sort button (accessibility: announces ascending/descending to screen readers)
+$isAscendingSort = strtolower($order) === 'asc';
 
 // Include the website header (navigation bar and layout)
+// Set dynamic page title for <title> tag (accessibility: helps users identify page in browser tabs and history)
+$pageTitle = 'Search Recipes';
 require_once __DIR__ . '/../includes/header.php';
 
 ?>
 
+<!-- 
+Accessibility: Main content landmark with id="main-content" and tabindex="-1" enables skip-link to focus page content.
+This allows keyboard users and screen reader users to jump directly to main content, bypassing navigation.
+-->
+<main id="main-content" class="container" tabindex="-1">
 
-<main class="container">
-
-    <h2>Search Recipes</h2>
-    <h3>Find recipes by name, ingredient, category or cooking time.</h3>
+    <!-- Accessibility: Single <h1> per page (changed from <h2>) establishes clear page hierarchy for screen readers -->
+    <h1>Search Recipes</h1>
+    <!-- Accessibility: Changed from <h3> to <p> for proper semantic structure (description, not heading) -->
+    <p>Find recipes by name, ingredient, category, or cooking time.</p>
     <!-- 
 Search form allowing users to filter recipes using multiple criteria.
 The more flexible the search functionality, the better the application
@@ -120,7 +129,21 @@ fulfills the coursework requirements.
                             <option value="newest" <?php if ($sort == 'newest')
                                 echo 'selected'; ?>>Newest</option>
                         </select>
-                        <button type="button" id="sort-direction" class="sort-btn">↓</button>
+                        <!-- 
+                        Accessibility improvements for sort toggle button:
+                        - aria-pressed: Announces toggle state (active/inactive) to screen readers
+                        - aria-label: Provides descriptive button purpose ("Sort order: ascending/descending")
+                        - title: Shows tooltip on hover for sighted users
+                        - Arrow symbol (↑ ascending / ↓ descending): Visual indicator of current sort direction
+                        -->
+                        <button
+                            type="button"
+                            id="sort-direction"
+                            class="sort-btn"
+                            aria-pressed="<?php echo $isAscendingSort ? 'true' : 'false'; ?>"
+                            aria-label="Sort order: <?php echo $isAscendingSort ? 'ascending' : 'descending'; ?>"
+                            title="Toggle sort order"
+                        ><?php echo $isAscendingSort ? '↑' : '↓'; ?></button>
 
                         <input type="hidden" name="order" id="sort-order"
                             value="<?php echo htmlspecialchars($order); ?>">

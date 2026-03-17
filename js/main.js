@@ -42,6 +42,14 @@ document.querySelectorAll('.star-rating').forEach(function (fieldset) {
                 }
             }
         });
+
+        // Accessibility update: keyboard focus gets the same star highlight feedback as mouse hover.
+        input.addEventListener('focus', function () {
+            highlight(index);
+        });
+
+        // Accessibility update: when focus leaves, restore highlight to the saved/checked rating.
+        input.addEventListener('blur', resetToChecked);
     });
 
     // Set initial state if a rating is already selected
@@ -59,11 +67,13 @@ const cancelEditBtn = document.getElementById('cancel-edit-btn');
 
 if (editProfileBtn && editProfileForm && cancelEditBtn) {
     editProfileBtn.addEventListener('click', function () {
+        // Show inline edit form and hide trigger button without leaving the page.
         editProfileForm.classList.remove('hidden');
         editProfileBtn.classList.add('hidden');
     });
 
     cancelEditBtn.addEventListener('click', function () {
+        // Revert to read-only profile view when user cancels editing.
         editProfileForm.classList.add('hidden');
         editProfileBtn.classList.remove('hidden');
     });
@@ -446,23 +456,35 @@ document.addEventListener("DOMContentLoaded", function () {
     const button = document.getElementById("sort-direction");
     const orderInput = document.getElementById("sort-order");
 
-    // Set the correct arrow when the page loads
-    if (orderInput.value === "asc") {
-        button.textContent = "↑";
-    } else {
-        button.textContent = "↓";
+    // Exit quietly on pages that do not include sort controls.
+    if (!button || !orderInput) {
+        return;
     }
+
+    function syncSortButtonState() {
+        const isAscending = orderInput.value === "asc";
+
+        // Accessibility update: keep visual arrow and ARIA state in sync so assistive tech announces current sort order.
+        button.textContent = isAscending ? "↑" : "↓";
+        button.setAttribute("aria-pressed", isAscending ? "true" : "false");
+        button.setAttribute("aria-label", "Sort order: " + (isAscending ? "ascending" : "descending"));
+        button.setAttribute("title", "Toggle sort order");
+    }
+
+    // Set the correct arrow when the page loads
+    syncSortButtonState();
 
     // Toggle sorting direction when the button is clicked
     button.addEventListener("click", function () {
 
-        if (orderInput.value === "desc") {
-            orderInput.value = "asc";
-            button.textContent = "↑";
-        } else {
+        // Persist selected direction in hidden input so the server receives asc/desc on submit.
+        if (orderInput.value === "asc") {
             orderInput.value = "desc";
-            button.textContent = "↓";
+        } else {
+            orderInput.value = "asc";
         }
+
+        syncSortButtonState();
 
     });
 
