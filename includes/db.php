@@ -1,5 +1,7 @@
 <?php
-require_once '../config/db.example.php'; // load database credentials (DB_HOST, DB_USER, DB_PASS, DB_NAME)
+// load database credentials (DB_HOST, DB_USER, DB_PASS, DB_NAME): config/db.php if present, otherwise the example template
+$dbConfig = file_exists(__DIR__ . '/../config/db.php') ? __DIR__ . '/../config/db.php' : __DIR__ . '/../config/db.example.php';
+require_once $dbConfig;
 
 $conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME); // open a MySQL connection using the configured credentials
 

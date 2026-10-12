@@ -1,150 +1,58 @@
-The $_SESSION array is the thread that connects all of these files together. It persists across requests — so when login.php sets $_SESSION['user_id'], account.php can read it on the next request. Without the session, PHP has no memory between page loads and every request starts from scratch. That's what startSession() at the top of every file is for — it reconnects PHP to that persistent session data.
+# Recipe App
 
-Registration Flow
+A recipe website where visitors can search and filter recipes, and registered users can save favourites and rate and comment on recipes. Built with plain PHP 8, MySQL, HTML5, CSS3 and JavaScript (no front-end frameworks). Group project for Networks and Web Technology (CSCK543), MSc Computer Science, University of Liverpool, February to March 2026.
 
-    1. First page load (GET request)
+## Team and contributions
 
-    PHP runs top to bottom
-    require_once loads the DB and auth files
-    startSession() starts a session
-    isLoggedIn() check runs — assuming false, continues
-    $errors = [] and $success = '' are set
-    if POST — condition is false, entire block is skipped
-    PHP hits the HTML, outputs a blank form with empty fields
-    Browser renders it, user sees the registration form
+Group D, four members:
 
-    2. User fills in the form and clicks Register
+| Member | Main contributions |
+| --- | --- |
+| **Thomas Makryniotis** | Authentication and account system (registration, login, logout, sessions, account page), database connection and configuration include, authentication helper include, shared header and footer includes, saved favourites, recipe rating and comments, authentication flow documentation, meeting minutes, group video presentation, submission package |
+| **Mircea Muresan** | Front end and most of the JavaScript |
+| **Alen Rasulov** | Search and filtering |
+| **Edon Kelmendi** | Database schema and sample data |
 
-    Browser collects all field values and sends a POST request to the same URL
-    The PHP file starts executing again from the top
+Passwords are hashed with `password_hash()` and checked with `password_verify()`. Database access in the authentication, favourites and ratings code uses `mysqli` prepared statements.
 
-    3. Second execution (POST request)
+## Features
 
-    require_once, startSession(), isLoggedIn() all run again
-    $errors = [] and $success = '' reset again
-    if POST — condition is true this time, block executes
-    Fields are extracted from $_POST and trimmed
-    Validation runs — any failures push messages into $errors
-    If $errors is empty, the database is queried
-    Either $errors gets a message or $success gets set
+- Browse, search and filter recipes by category, with search suggestions
+- Recipe pages with ingredients and steps
+- User registration, login, logout and an account page
+- Save and remove favourite recipes
+- Rate recipes with a star widget and leave a comment
+- Accessibility statement page; form errors announced with ARIA roles
 
-    4. PHP finishes, HTML is generated
+## Tech stack
 
-    If there were errors: error list renders, form repopulates with the submitted values
-    If success: success message renders, form is still shown
-    Finished HTML is sent to the browser
+PHP 8, MySQL 8, HTML5, CSS3, vanilla JavaScript. Developed and run locally on XAMPP.
 
-    5. User sees the result
+## Running locally
 
-    Errors displayed, fields pre-filled so they can correct and resubmit
-    Or success message with the login link
+1. Install [XAMPP](https://www.apachefriends.org/) (or any Apache, PHP 8 and MySQL 8 stack) and start Apache and MySQL.
+2. Copy this folder into the web root (`htdocs`).
+3. Create the database and load the sample data, for example with the MySQL command line:
 
+   ```bash
+   mysql -u root < database/schema.sql
+   mysql -u root < database/seed.sql
+   ```
 
-    Browser requests register.php
-            ↓
-    register.php loads
-            ↓
-    require_once '../includes/db.php'        ← opens MySQL connection
-    require_once '../includes/auth.php'      ← loads helper functions
-            ↓
-    startSession()                           ← starts PHP session
-    isLoggedIn()?                            ← checks $_SESSION for user_id
-        YES → redirect to account.php        ← already logged in, no need to register
-        NO  → continue
-            ↓
-    $_SERVER['REQUEST_METHOD'] === 'POST'?
-        NO  → just render the HTML form      ← first visit, nothing submitted yet
-        YES → validate form inputs
-                ↓
-            any errors?
-                YES → re-render form with error messages
-                NO  → check if email exists in DB
-                        ↓
-                    email already exists?
-                        YES → re-render form with error
-                        NO  → password_hash() the password
-                            INSERT INTO users
-                            show success message with link to login.php
+4. Copy `config/db.example.php` to `config/db.php` and set your database credentials. `config/db.php` is git-ignored.
+5. Open `http://localhost/recipe-app-main/` (adjust to your folder name).
 
-Login Flow
+Sample users (see `database/seed.sql`) share the demo password `password`. They are for local testing only.
 
-    Browser requests login.php
-            ↓
-    login.php loads
-            ↓
-    require_once '../includes/db.php'        ← opens MySQL connection
-    require_once '../includes/auth.php'      ← loads helper functions
-            ↓
-    startSession()
-    isLoggedIn()?
-        YES → redirect to account.php
-        NO  → continue
-            ↓
-    $_SERVER['REQUEST_METHOD'] === 'POST'?
-        NO  → just render the HTML login form
-        YES → get email and password from $_POST
-                ↓
-            fields empty?
-                YES → re-render form with error
-                NO  → SELECT user from DB where email matches
-                        ↓
-                    user found AND password_verify() passes?
-                        NO  → re-render form, "Invalid email or password"
-                        YES → $_SESSION['user_id'] = $id
-                            $_SESSION['user_name'] = $name
-                            redirect to account.php
+## Project structure
 
-Account Page Flow
+```
+config/      database credentials template
+database/    schema.sql and seed.sql
+includes/    db connection, auth, favourites, ratings, header and footer
+pages/       login, register, account, search, results, recipe, accessibility
+css/ js/     styles and scripts
+docs/        authentication and session flow
+```
 
-    Browser requests login.php
-            ↓
-    login.php loads
-            ↓
-    require_once '../includes/db.php'        ← opens MySQL connection
-    require_once '../includes/auth.php'      ← loads helper functions
-            ↓
-    startSession()
-    isLoggedIn()?
-        YES → redirect to account.php
-        NO  → continue
-            ↓
-    $_SERVER['REQUEST_METHOD'] === 'POST'?
-        NO  → just render the HTML login form
-        YES → get email and password from $_POST
-                ↓
-            fields empty?
-                YES → re-render form with error
-                NO  → SELECT user from DB where email matches
-                        ↓
-                    user found AND password_verify() passes?
-                        NO  → re-render form, "Invalid email or password"
-                        YES → $_SESSION['user_id'] = $id
-                            $_SESSION['user_name'] = $name
-                            redirect to account.php
-
-Logout Flow
-
-    Browser requests logout.php
-            ↓
-    require_once '../includes/auth.php'
-            ↓
-    startSession()
-            ↓
-    $_SESSION = []                           ← wipe all session data
-    setcookie()                              ← destroy the session cookie in browser
-    session_destroy()                        ← destroy session on server
-            ↓
-    redirect to login.php
-
-
-Security decisions:
-
-- Passwords are hashed with password_hash() / verified with password_verify() — not stored as plain text
-- All user output is wrapped in htmlspecialchars() to prevent XSS attacks
-- Login gives a generic "Invalid email or password" message — never reveals which field was wrong
-- Prepared statements with bound parameters throughout — prevents SQL injection
-
-TODO:
-
-- The favourites section in account.php is stubbed out waiting for Person 1's favourites table
-- Client-side JS validation in main.js is Person 4's responsibility — the novalidate attribute on the forms means browser validation is suppressed so your server-side validation runs, and Person 4 replaces that with custom JS
+See [docs/authentication-flow.md](docs/authentication-flow.md) for a walkthrough of how registration and sessions work.
